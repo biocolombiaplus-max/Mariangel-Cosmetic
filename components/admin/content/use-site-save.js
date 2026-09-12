@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { parseJsonResponse } from "@/lib/api-client";
 
 export function useSiteSave() {
   const router = useRouter();
@@ -19,8 +20,7 @@ export function useSiteSave() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || "No se pudo guardar");
+      await parseJsonResponse(res);
       setSaved(true);
       router.refresh();
       setTimeout(() => setSaved(false), 2500);

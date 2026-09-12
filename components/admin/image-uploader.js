@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { parseJsonResponse } from "@/lib/api-client";
 
 // Uploads to /api/upload and reports back the resulting URL(s).
 // Works both for a single image field (value: string) and a list (value: array).
@@ -20,8 +21,7 @@ export default function ImageUploader({ value, onChange, multiple = false, label
         const formData = new FormData();
         formData.append("file", file);
         const res = await fetch("/api/upload", { method: "POST", body: formData });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || "Error al subir imagen");
+        const json = await parseJsonResponse(res);
         uploaded.push(json.url);
       }
       if (multiple) {

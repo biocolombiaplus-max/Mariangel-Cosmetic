@@ -10,18 +10,25 @@ export async function GET() {
 
 // Shallow-merges the posted keys (settings/sections/categories) into the store.
 export async function PUT(request) {
-  if (!(await isAdminAuthenticated())) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  try {
+    if (!(await isAdminAuthenticated())) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
+
+    const updated = await updateStore((data) => {
+      if (body.settings) data.settings = { ...data.settings, ...body.settings };
+      if (body.sections) data.sections = { ...data.sections, ...body.sections };
+      if (body.categories) data.categories = body.categories;
+      return { settings: data.settings, sections: data.sections, categories: data.categories };
+    });
+
+    return NextResponse.json(updated);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err.message || "No se pudo guardar el contenido" },
+      { status: 500 }
+    );
   }
-  const body = await request.json().catch(() => null);
-  if (!body) return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
-
-  const updated = await updateStore((data) => {
-    if (body.settings) data.settings = { ...data.settings, ...body.settings };
-    if (body.sections) data.sections = { ...data.sections, ...body.sections };
-    if (body.categories) data.categories = body.categories;
-    return { settings: data.settings, sections: data.sections, categories: data.categories };
-  });
-
-  return NextResponse.json(updated);
 }

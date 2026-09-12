@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/admin/image-uploader";
+import { parseJsonResponse } from "@/lib/api-client";
 
 const empty = {
   name: "",
@@ -43,8 +44,7 @@ export default function ProductForm({ product, categories }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "No se pudo guardar el producto");
+      await parseJsonResponse(res);
       router.push("/admin/productos");
       router.refresh();
     } catch (e) {

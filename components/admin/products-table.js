@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { money } from "@/lib/format";
+import { parseJsonResponse } from "@/lib/api-client";
 
 export default function ProductsTable({ initialProducts, categories }) {
   const router = useRouter();
@@ -14,14 +15,16 @@ export default function ProductsTable({ initialProducts, categories }) {
 
   async function toggle(product, field) {
     setBusyId(product.id);
-    const res = await fetch(`/api/products/${product.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [field]: !product[field] }),
-    });
-    if (res.ok) {
-      const updated = await res.json();
+    try {
+      const res = await fetch(`/api/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: !product[field] }),
+      });
+      const updated = await parseJsonResponse(res);
       setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+    } catch (e) {
+      alert(e.message);
     }
     setBusyId(null);
   }
@@ -29,9 +32,12 @@ export default function ProductsTable({ initialProducts, categories }) {
   async function remove(product) {
     if (!confirm(`¿Eliminar "${product.name}"? Esta acción no se puede deshacer.`)) return;
     setBusyId(product.id);
-    const res = await fetch(`/api/products/${product.id}`, { method: "DELETE" });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/products/${product.id}`, { method: "DELETE" });
+      await parseJsonResponse(res);
       setProducts((prev) => prev.filter((p) => p.id !== product.id));
+    } catch (e) {
+      alert(e.message);
     }
     setBusyId(null);
     router.refresh();
