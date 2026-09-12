@@ -17,6 +17,11 @@
   --brand-deep-900: #331b33;
   --brand-cream: #fff8f3;
   --brand-gold: #d9a441;
+
+  /* A more saturated accent, reserved for attention-grabbing UI like the
+     announcement bar — the rest of the palette is intentionally soft. */
+  --brand-hot-500: #e0157a;
+  --brand-hot-700: #9c0f56;
 }
 
 @theme inline {
@@ -70,4 +75,37 @@ body {
 }
 .scrollbar-none {
   scrollbar-width: none;
+}
+
+/* Announcement bar: a bolder, more saturated gradient than the rest of the
+   site on purpose, so it reads as "important" the way big retailers' promo
+   bars do — with a slow shimmer so it stays lively without being noisy. */
+.promo-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--brand-deep-900),
+    var(--brand-hot-700),
+    var(--brand-hot-500),
+    var(--brand-hot-700),
+    var(--brand-deep-900)
+  );
+  background-size: 300% 100%;
+  animation: promo-shimmer-move 9s linear infinite;
+  box-shadow: 0 2px 10px rgba(51, 27, 51, 0.25);
+}
+
+@keyframes promo-shimmer-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-shimmer {
+    animation: none;
+    background-position: 40% 50%;
+  }
 }

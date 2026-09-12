@@ -5,7 +5,6 @@ import { publicProduct } from "@/lib/products";
 import Hero from "@/components/sections/hero";
 import CategoryPills from "@/components/sections/category-pills";
 import FeaturedProducts from "@/components/sections/featured-products";
-import PromoBanner from "@/components/sections/promo-banner";
 import About from "@/components/sections/about";
 import InstagramGallery from "@/components/sections/instagram-gallery";
 import Testimonials from "@/components/sections/testimonials";
@@ -23,7 +22,6 @@ export default async function HomePage() {
       <Hero slides={data.sections.hero} />
       <CategoryPills categories={data.categories} />
       <FeaturedProducts products={featured} />
-      <PromoBanner promo={data.sections.promo} />
       <About about={data.sections.about} />
       <InstagramGallery
         instagram={data.sections.instagram}

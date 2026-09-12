@@ -31,8 +31,12 @@
       }
     ],
     "promo": {
-      "text": "Envíos a toda Colombia · Paga contraentrega · Pedidos por WhatsApp",
-      "image": "/brand/promo-envio.svg"
+      "messages": [
+        "🚚 ¡ENVÍO GRATIS en Cúcuta, Los Patios y Villa del Rosario! Por compras desde $59.000",
+        "🔥 Nuevos ingresos cada semana — no te quedes sin el tuyo",
+        "💜 +2.000 pedidos entregados con amor en el área metropolitana",
+        "💬 Compra fácil y seguro: pedidos 100% por WhatsApp"
+      ]
     },
     "about": {
       "title": "Sobre Mariangel Cosmetic",
