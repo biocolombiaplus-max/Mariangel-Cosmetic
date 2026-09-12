@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { readStore } from "@/lib/store";
+import { publicProduct } from "@/lib/products";
 import ShopGrid from "@/components/shop-grid";
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default async function ShopPage({ searchParams }) {
 
   return (
     <ShopGrid
-      products={data.products}
+      products={data.products.map(publicProduct)}
       categories={data.categories}
       initialCategory={params?.categoria || ""}
     />

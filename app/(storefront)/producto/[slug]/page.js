@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
 import { readStore } from "@/lib/store";
+import { publicProduct } from "@/lib/products";
 import ProductDetail from "@/components/product-detail";
 import FeaturedProducts from "@/components/sections/featured-products";
 
@@ -25,12 +26,13 @@ export default async function ProductPage({ params }) {
 
   const related = data.products
     .filter((p) => p.category === product.category && p.id !== product.id && p.active)
-    .slice(0, 4);
+    .slice(0, 4)
+    .map(publicProduct);
 
   return (
     <>
       <ProductDetail
-        product={product}
+        product={publicProduct(product)}
         whatsapp={data.settings.whatsapp}
         storeName={data.settings.storeName}
       />

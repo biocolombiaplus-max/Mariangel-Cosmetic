@@ -134,7 +134,8 @@
       "stock": 24,
       "featured": true,
       "active": true,
-      "rating": 4.8
+      "rating": 4.8,
+      "cost": 15000
     },
     {
       "id": "p2",
@@ -150,7 +151,8 @@
       "stock": 30,
       "featured": true,
       "active": true,
-      "rating": 4.7
+      "rating": 4.7,
+      "cost": 13000
     },
     {
       "id": "p3",
@@ -166,7 +168,8 @@
       "stock": 18,
       "featured": false,
       "active": true,
-      "rating": 4.6
+      "rating": 4.6,
+      "cost": 14000
     },
     {
       "id": "p4",
@@ -182,7 +185,8 @@
       "stock": 20,
       "featured": true,
       "active": true,
-      "rating": 4.9
+      "rating": 4.9,
+      "cost": 17000
     },
     {
       "id": "p5",
@@ -198,7 +202,8 @@
       "stock": 15,
       "featured": true,
       "active": true,
-      "rating": 4.8
+      "rating": 4.8,
+      "cost": 18000
     },
     {
       "id": "p6",
@@ -214,7 +219,8 @@
       "stock": 22,
       "featured": false,
       "active": true,
-      "rating": 4.7
+      "rating": 4.7,
+      "cost": 23000
     },
     {
       "id": "p7",
@@ -230,7 +236,8 @@
       "stock": 26,
       "featured": false,
       "active": true,
-      "rating": 4.6
+      "rating": 4.6,
+      "cost": 13500
     },
     {
       "id": "p8",
@@ -246,7 +253,8 @@
       "stock": 16,
       "featured": true,
       "active": true,
-      "rating": 4.9
+      "rating": 4.9,
+      "cost": 25000
     },
     {
       "id": "p9",
@@ -262,7 +270,8 @@
       "stock": 19,
       "featured": false,
       "active": true,
-      "rating": 4.7
+      "rating": 4.7,
+      "cost": 24000
     },
     {
       "id": "p10",
@@ -278,7 +287,8 @@
       "stock": 12,
       "featured": true,
       "active": true,
-      "rating": 4.9
+      "rating": 4.9,
+      "cost": 30000
     },
     {
       "id": "p11",
@@ -294,7 +304,8 @@
       "stock": 35,
       "featured": false,
       "active": true,
-      "rating": 4.5
+      "rating": 4.5,
+      "cost": 9000
     },
     {
       "id": "p12",
@@ -310,7 +321,8 @@
       "stock": 20,
       "featured": true,
       "active": true,
-      "rating": 4.8
+      "rating": 4.8,
+      "cost": 19000
     },
     {
       "id": "p13",
@@ -326,7 +338,8 @@
       "stock": 17,
       "featured": false,
       "active": true,
-      "rating": 4.7
+      "rating": 4.7,
+      "cost": 21000
     },
     {
       "id": "p14",
@@ -342,7 +355,8 @@
       "stock": 10,
       "featured": true,
       "active": true,
-      "rating": 5
+      "rating": 5,
+      "cost": 48000
     },
     {
       "id": "p15",
@@ -358,7 +372,9 @@
       "stock": 28,
       "featured": false,
       "active": true,
-      "rating": 4.6
+      "rating": 4.6,
+      "cost": 10500
     }
-  ]
+  ],
+  "orders": []
 }

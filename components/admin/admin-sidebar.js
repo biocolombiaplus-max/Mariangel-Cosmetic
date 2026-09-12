@@ -6,6 +6,7 @@ import BrandLogo from "@/components/brand-logo";
 
 const LINKS = [
   { href: "/admin", label: "Resumen", icon: "📊" },
+  { href: "/admin/pedidos", label: "Pedidos · CRM", icon: "💬" },
   { href: "/admin/productos", label: "Productos", icon: "🛍️" },
   { href: "/admin/contenido", label: "Contenido de la tienda", icon: "🎨" },
 ];

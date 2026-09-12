@@ -1,14 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/components/cart-context";
 import { money } from "@/lib/format";
-import { buildCartMessage, waLink } from "@/lib/whatsapp";
+import CheckoutModal from "@/components/checkout-modal";
 
 export default function CartDrawer({ whatsapp, storeName }) {
   const { items, isOpen, close, removeItem, updateQty, total, clear } = useCart();
-
-  const checkoutHref = waLink(whatsapp, buildCartMessage(storeName, items, total));
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   return (
     <>
@@ -98,14 +98,12 @@ export default function CartDrawer({ whatsapp, storeName }) {
               <span className="text-brand-plum-700/70">Subtotal</span>
               <span className="text-lg font-bold text-brand-deep-900">{money(total)}</span>
             </div>
-            <a
-              href={checkoutHref}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => setCheckoutOpen(true)}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-md hover:brightness-95"
             >
               Finalizar por WhatsApp
-            </a>
+            </button>
             <button
               onClick={clear}
               className="mt-2 w-full text-center text-xs text-brand-plum-700/60 hover:text-brand-plum-700 underline"
@@ -115,6 +113,19 @@ export default function CartDrawer({ whatsapp, storeName }) {
           </div>
         )}
       </aside>
+
+      <CheckoutModal
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        whatsapp={whatsapp}
+        storeName={storeName}
+        items={items}
+        total={total}
+        onSuccess={() => {
+          clear();
+          close();
+        }}
+      />
     </>
   );
 }

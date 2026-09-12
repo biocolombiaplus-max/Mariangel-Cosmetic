@@ -1,5 +1,9 @@
 import Link from "next/link";
 import BrandLogo from "@/components/brand-logo";
+import { waLink, normalizeCoPhone } from "@/lib/whatsapp";
+
+const BIOMARKETING_WHATSAPP = normalizeCoPhone("3505457420");
+const BIOMARKETING_MESSAGE = "Quiero los servicios de página web de Biomarketing";
 
 export default function Footer({ settings, footer, categories = [] }) {
   return (
@@ -71,6 +75,20 @@ export default function Footer({ settings, footer, categories = [] }) {
             </li>
           </ul>
         </div>
+      </div>
+      <div className="flex justify-center border-t border-white/10 py-5">
+        <a
+          href={waLink(BIOMARKETING_WHATSAPP, BIOMARKETING_MESSAGE)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="brand-gradient inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-brand-plum-700/30 transition-transform hover:scale-[1.03]"
+        >
+          <svg viewBox="0 0 32 32" className="h-3.5 w-3.5 fill-white">
+            <path d="M16.004 2.667c-7.363 0-13.337 5.973-13.337 13.336 0 2.353.615 4.646 1.782 6.666l-1.892 6.908 7.077-1.856a13.29 13.29 0 0 0 6.37 1.622h.006c7.362 0 13.336-5.974 13.336-13.34 0-3.563-1.388-6.914-3.908-9.434a13.253 13.253 0 0 0-9.434-3.902Z" />
+          </svg>
+          Página diseñada por{" "}
+          <span className="font-script text-sm normal-case tracking-normal">Biomarketing</span>
+        </a>
       </div>
       <div className="flex flex-col items-center gap-2 border-t border-white/10 py-4 text-center text-xs text-brand-blush-100/60 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
         <span>

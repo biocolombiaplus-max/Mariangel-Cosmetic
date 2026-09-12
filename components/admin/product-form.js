@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/admin/image-uploader";
 import { parseJsonResponse } from "@/lib/api-client";
+import { money } from "@/lib/format";
 
 const empty = {
   name: "",
   category: "",
   price: "",
   compareAtPrice: "",
+  cost: "",
   description: "",
   images: [],
   stock: 0,
@@ -38,6 +40,7 @@ export default function ProductForm({ product, categories }) {
         price: Number(form.price) || 0,
         compareAtPrice: form.compareAtPrice === "" ? null : Number(form.compareAtPrice),
         stock: Number(form.stock) || 0,
+        cost: Number(form.cost) || 0,
       };
       const res = await fetch(isEdit ? `/api/products/${product.id}` : "/api/products", {
         method: isEdit ? "PUT" : "POST",
@@ -129,6 +132,32 @@ export default function ProductForm({ product, categories }) {
             onChange={(e) => set("compareAtPrice", e.target.value)}
             className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
           />
+        </div>
+
+        <div className="sm:col-span-2 rounded-xl border border-dashed border-brand-orchid-400/50 bg-brand-blush-50/60 p-4">
+          <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-brand-deep-900">
+            🔒 Costo interno (COP)
+          </label>
+          <p className="mb-2 text-xs text-brand-deep-900/50">
+            Solo tú lo ves en el panel — nunca se muestra a tus clientes. Se usa para calcular tu
+            ganancia en el resumen.
+          </p>
+          <input
+            type="number"
+            min="0"
+            value={form.cost}
+            onChange={(e) => set("cost", e.target.value)}
+            placeholder="0"
+            className="w-full max-w-xs rounded-xl border border-brand-pink-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
+          />
+          {Number(form.price) > 0 && form.cost !== "" && (
+            <p className="mt-2 text-xs font-medium text-brand-plum-700">
+              Ganancia estimada por unidad:{" "}
+              {money(Number(form.price) - Number(form.cost))} (
+              {Math.round(((Number(form.price) - Number(form.cost)) / Number(form.price)) * 100)}%
+              margen)
+            </p>
+          )}
         </div>
 
         <div className="sm:col-span-2">

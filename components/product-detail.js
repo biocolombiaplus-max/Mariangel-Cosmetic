@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { money } from "@/lib/format";
 import { useCart } from "@/components/cart-context";
-import { waLink, buildProductMessage } from "@/lib/whatsapp";
+import CheckoutModal from "@/components/checkout-modal";
 import StarRating from "@/components/star-rating";
 
 export default function ProductDetail({ product, whatsapp, storeName }) {
@@ -11,9 +11,13 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
   const [added, setAdded] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const buyNowHref = waLink(whatsapp, buildProductMessage(storeName, product));
+  const buyNowItems = [
+    { id: product.id, name: product.name, price: product.price, qty },
+  ];
+  const buyNowTotal = product.price * qty;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
@@ -92,15 +96,23 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
           </button>
         </div>
 
-        <a
-          href={buyNowHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm hover:brightness-95"
+        <button
+          onClick={() => setCheckoutOpen(true)}
+          disabled={product.stock <= 0}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm hover:brightness-95 disabled:opacity-60"
         >
           Comprar ya por WhatsApp
-        </a>
+        </button>
       </div>
+
+      <CheckoutModal
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        whatsapp={whatsapp}
+        storeName={storeName}
+        items={buyNowItems}
+        total={buyNowTotal}
+      />
     </div>
   );
 }

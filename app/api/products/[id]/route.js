@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
+import { publicProduct } from "@/lib/products";
 
 export async function GET(_request, { params }) {
   const { id } = await params;
   const data = await readStore();
   const product = data.products.find((p) => p.id === id || p.slug === id);
   if (!product) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
-  return NextResponse.json(product);
+  const authed = await isAdminAuthenticated();
+  return NextResponse.json(authed ? product : publicProduct(product));
 }
 
 export async function PUT(request, { params }) {
@@ -44,6 +46,7 @@ export async function PUT(request, { params }) {
             ? null
             : Number(body.compareAtPrice),
         stock: body.stock != null ? Number(body.stock) : existing.stock,
+        cost: body.cost != null ? Number(body.cost) : existing.cost || 0,
         images: Array.isArray(body.images) ? body.images : existing.images,
         id: existing.id,
       };

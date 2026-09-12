@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
+import { publicProduct } from "@/lib/products";
 
 export async function GET() {
   const data = await readStore();
-  return NextResponse.json(data.products);
+  const authed = await isAdminAuthenticated();
+  const products = authed ? data.products : data.products.map(publicProduct);
+  return NextResponse.json(products);
 }
 
 export async function POST(request) {
@@ -36,6 +39,7 @@ export async function POST(request) {
         description: body.description || "",
         images: Array.isArray(body.images) ? body.images : [],
         stock: Number(body.stock) || 0,
+        cost: body.cost ? Number(body.cost) : 0,
         featured: Boolean(body.featured),
         active: body.active !== false,
         rating: body.rating ? Number(body.rating) : 5,

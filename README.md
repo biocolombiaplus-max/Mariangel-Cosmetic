@@ -9,8 +9,11 @@ Landing page + tienda online + panel administrativo para **Mariangel Cosmetic**,
 - **Ficha de producto (`/producto/[slug]`)** con galería, selector de cantidad, "agregar al carrito" y "comprar ya por WhatsApp".
 - **Carrito** persistente (localStorage) con checkout que arma automáticamente el mensaje de WhatsApp con el resumen del pedido.
 - **Panel administrativo (`/admin`)**, protegido con contraseña, estilo Shopify:
-  - CRUD de productos con subida de fotos.
+  - CRUD de productos con subida de fotos, con un campo de **costo interno** (oculto para tus clientes) para calcular tu ganancia real.
   - Editor de contenido de la landing por secciones (portada/hero, promoción, "sobre nosotros", galería de Instagram, testimonios, pie de página) y datos generales (logo, nombre, WhatsApp, Instagram).
+  - **Dashboard de resumen** con ingresos confirmados, ganancia estimada, valor en negociación, tasa de cierre y pedidos recientes.
+  - **CRM de pedidos estilo Kommo** (`/admin/pedidos`): tablero Kanban por etapas (Nuevo, Contactado, En negociación, Ganado, Perdido) con tarjetas que se arrastran entre columnas, notas de seguimiento, etiquetas, y un botón directo para escribirle por WhatsApp a cada clienta (remarketing).
+- **Captura de leads en el checkout:** como no usamos la API oficial de WhatsApp Business (requiere aprobación de Meta), antes de abrir WhatsApp se le pide nombre y número a la clienta — así cada pedido por WhatsApp queda registrado en el CRM en vez de perderse en el chat.
 
 ## Cómo correrlo
 
@@ -60,3 +63,9 @@ El número de WhatsApp (`3005089954`) se gestiona desde **Contenido de la tienda
 ## Logo
 
 Se incluye un logo por defecto recreado en SVG/CSS a partir de la identidad de marca. Puedes subir el logo real desde **Contenido de la tienda → General → Logo de la tienda** en el panel administrativo.
+
+## CRM y ganancia (costo interno)
+
+- Cada producto tiene un campo **"Costo interno (COP)"** en el formulario de admin, marcado con 🔒: solo se ve en el panel, nunca se expone en la tienda ni en las respuestas públicas de la API.
+- El dashboard (`/admin`) calcula la **ganancia estimada** restando ese costo al precio de venta de los pedidos marcados como "Ganado".
+- El **CRM de pedidos** (`/admin/pedidos`) captura automáticamente cada checkout por WhatsApp como una tarjeta en la etapa "Nuevo". Desde ahí puedes moverla de etapa, agregar notas de seguimiento, etiquetas (VIP, Recompra, etc.) y escribirle directo por WhatsApp para remarketing — todo sin depender de la API oficial de WhatsApp Business.
