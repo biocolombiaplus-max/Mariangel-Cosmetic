@@ -72,8 +72,14 @@ export default function Footer({ settings, footer, categories = [] }) {
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-brand-blush-100/60">
-        © {new Date().getFullYear()} {settings?.storeName || "Mariangel Cosmetic"}. Todos los derechos reservados.
+      <div className="flex flex-col items-center gap-2 border-t border-white/10 py-4 text-center text-xs text-brand-blush-100/60 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+        <span>
+          © {new Date().getFullYear()} {settings?.storeName || "Mariangel Cosmetic"}. Todos los derechos
+          reservados.
+        </span>
+        <Link href="/admin/login" className="text-brand-blush-100/50 hover:text-white hover:underline">
+          Iniciar sesión (equipo)
+        </Link>
       </div>
     </footer>
   );
