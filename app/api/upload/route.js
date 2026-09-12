@@ -1,0 +1,43 @@
+import { NextResponse } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
+import { randomUUID } from "crypto";
+import { isAdminAuthenticated } from "@/lib/auth";
+
+const ALLOWED_TYPES = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+  "image/svg+xml": "svg",
+  "image/gif": "gif",
+};
+const MAX_SIZE = 8 * 1024 * 1024; // 8MB
+
+export async function POST(request) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const formData = await request.formData().catch(() => null);
+  const file = formData?.get("file");
+
+  if (!file || typeof file === "string") {
+    return NextResponse.json({ error: "Archivo requerido" }, { status: 400 });
+  }
+  if (!ALLOWED_TYPES[file.type]) {
+    return NextResponse.json({ error: "Formato de imagen no permitido" }, { status: 400 });
+  }
+  if (file.size > MAX_SIZE) {
+    return NextResponse.json({ error: "La imagen supera 8MB" }, { status: 400 });
+  }
+
+  const ext = ALLOWED_TYPES[file.type];
+  const filename = `${randomUUID()}.${ext}`;
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  await fs.mkdir(uploadsDir, { recursive: true });
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(path.join(uploadsDir, filename), buffer);
+
+  return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 });
+}

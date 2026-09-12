@@ -1,0 +1,364 @@
+{
+  "settings": {
+    "storeName": "Mariangel Cosmetic",
+    "tagline": "Belleza juvenil, brillo real",
+    "whatsapp": "573005089954",
+    "instagramHandle": "@mariangelcosmetic",
+    "instagramUrl": "https://instagram.com/mariangelcosmetic",
+    "logo": "",
+    "currency": "COP",
+    "freeShippingText": "Envíos a toda Colombia"
+  },
+  "sections": {
+    "hero": [
+      {
+        "id": "hero-1",
+        "badge": "Nueva colección ✨",
+        "title": "Brilla con tu\npropia magia",
+        "subtitle": "Maquillaje y skincare juvenil pensado para resaltar tu belleza natural. Pide por WhatsApp y recíbelo en toda Colombia.",
+        "ctaText": "Ver catálogo",
+        "ctaLink": "/tienda",
+        "image": "/brand/hero-1.svg"
+      },
+      {
+        "id": "hero-2",
+        "badge": "Favoritos de la semana 💜",
+        "title": "Glow up\ntodos los días",
+        "subtitle": "Labiales, rubores y paletas en tonos que enamoran. Calidad pro a precio real.",
+        "ctaText": "Comprar ahora",
+        "ctaLink": "/tienda",
+        "image": "/brand/hero-2.svg"
+      }
+    ],
+    "promo": {
+      "text": "Envíos a toda Colombia · Paga contraentrega · Pedidos por WhatsApp",
+      "image": "/brand/promo-envio.svg"
+    },
+    "about": {
+      "title": "Sobre Mariangel Cosmetic",
+      "text": "Somos una marca colombiana creada para chicas que quieren verse y sentirse increíbles sin complicarse. Seleccionamos cada producto pensando en calidad, tendencia y precio justo, para que tu rutina de belleza sea siempre un placer.",
+      "highlights": [
+        "+2.000 pedidos entregados",
+        "Envío a todo el país",
+        "Atención personalizada por WhatsApp"
+      ],
+      "image": "/brand/about.svg"
+    },
+    "instagram": {
+      "title": "Síguenos en Instagram",
+      "handle": "@mariangelcosmetic",
+      "images": [
+        "/brand/insta-1.svg",
+        "/brand/insta-2.svg",
+        "/brand/insta-3.svg",
+        "/brand/insta-4.svg",
+        "/brand/insta-5.svg",
+        "/brand/insta-6.svg"
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "name": "Valentina R.",
+        "text": "Los labiales duran todo el día y los colores son hermosos. ¡Ya voy en mi tercer pedido!",
+        "rating": 5
+      },
+      {
+        "id": "t2",
+        "name": "Camila G.",
+        "text": "Excelente atención por WhatsApp, me asesoraron con los tonos y llegó súper rápido a Medellín.",
+        "rating": 5
+      },
+      {
+        "id": "t3",
+        "name": "Isabella M.",
+        "text": "La calidad es de verdad profesional, se nota la diferencia con otras marcas.",
+        "rating": 5
+      },
+      {
+        "id": "t4",
+        "name": "Mariana P.",
+        "text": "Amo el kit signature, viene precioso para regalo y el rendimiento es increíble.",
+        "rating": 4
+      }
+    ],
+    "footer": {
+      "description": "Maquillaje y cuidado facial juvenil, con envíos a toda Colombia y atención personalizada por WhatsApp.",
+      "schedule": "Lunes a sábado · 8:00am - 7:00pm",
+      "city": "Colombia 🇨🇴",
+      "email": "hola@mariangelcosmetic.com"
+    }
+  },
+  "categories": [
+    {
+      "slug": "labiales",
+      "name": "Labiales"
+    },
+    {
+      "slug": "rostro",
+      "name": "Rostro"
+    },
+    {
+      "slug": "ojos",
+      "name": "Ojos"
+    },
+    {
+      "slug": "brochas",
+      "name": "Brochas y Accesorios"
+    },
+    {
+      "slug": "skincare",
+      "name": "Skincare"
+    },
+    {
+      "slug": "cejas",
+      "name": "Cejas"
+    },
+    {
+      "slug": "sets",
+      "name": "Sets y Kits"
+    }
+  ],
+  "products": [
+    {
+      "id": "p1",
+      "slug": "labial-mate-rose",
+      "name": "Labial Mate Rose",
+      "category": "labiales",
+      "price": 38000,
+      "compareAtPrice": 48000,
+      "description": "Labial en tono rosa mate de larga duración, acabado aterciopelado y alta pigmentación. Ideal para looks juveniles de día o de noche.",
+      "images": [
+        "/products/labial-mate-rose.svg"
+      ],
+      "stock": 24,
+      "featured": true,
+      "active": true,
+      "rating": 4.8
+    },
+    {
+      "id": "p2",
+      "slug": "gloss-brillante-berry",
+      "name": "Gloss Brillante Berry",
+      "category": "labiales",
+      "price": 32000,
+      "compareAtPrice": null,
+      "description": "Gloss hidratante con efecto voluminizador y brillo espejo, tono berry irresistible.",
+      "images": [
+        "/products/labial-gloss-berry.svg"
+      ],
+      "stock": 30,
+      "featured": true,
+      "active": true,
+      "rating": 4.7
+    },
+    {
+      "id": "p3",
+      "slug": "labial-liquido-nude",
+      "name": "Labial Líquido Nude",
+      "category": "labiales",
+      "price": 35000,
+      "compareAtPrice": 42000,
+      "description": "Fórmula líquida de secado rápido con acabado mate suave, en tono nude perfecto para el día a día.",
+      "images": [
+        "/products/labial-liquido-nude.svg"
+      ],
+      "stock": 18,
+      "featured": false,
+      "active": true,
+      "rating": 4.6
+    },
+    {
+      "id": "p4",
+      "slug": "rubor-en-polvo-duo",
+      "name": "Rubor en Polvo Duo",
+      "category": "rostro",
+      "price": 42000,
+      "compareAtPrice": null,
+      "description": "Duo de rubores en polvo compacto de larga fijación, para un color natural que dura todo el día.",
+      "images": [
+        "/products/rubor-duo.svg"
+      ],
+      "stock": 20,
+      "featured": true,
+      "active": true,
+      "rating": 4.9
+    },
+    {
+      "id": "p5",
+      "slug": "iluminador-glow",
+      "name": "Iluminador Glow Skin",
+      "category": "rostro",
+      "price": 45000,
+      "compareAtPrice": 55000,
+      "description": "Iluminador líquido para un efecto piel de vidrio, se mezcla con tu base o se usa solo para un glow natural.",
+      "images": [
+        "/products/iluminador-glow.svg"
+      ],
+      "stock": 15,
+      "featured": true,
+      "active": true,
+      "rating": 4.8
+    },
+    {
+      "id": "p6",
+      "slug": "base-natural-cobertura",
+      "name": "Base Natural Cobertura Media",
+      "category": "rostro",
+      "price": 58000,
+      "compareAtPrice": null,
+      "description": "Base líquida de cobertura media buildable, acabado natural que cuida tu piel todo el día.",
+      "images": [
+        "/products/base-natural.svg"
+      ],
+      "stock": 22,
+      "featured": false,
+      "active": true,
+      "rating": 4.7
+    },
+    {
+      "id": "p7",
+      "slug": "corrector-hd",
+      "name": "Corrector HD Full Coverage",
+      "category": "rostro",
+      "price": 34000,
+      "compareAtPrice": null,
+      "description": "Corrector de alta cobertura para ojeras e imperfecciones, fórmula liviana anti-arrugas.",
+      "images": [
+        "/products/corrector-hd.svg"
+      ],
+      "stock": 26,
+      "featured": false,
+      "active": true,
+      "rating": 4.6
+    },
+    {
+      "id": "p8",
+      "slug": "paleta-sombras-sunset",
+      "name": "Paleta de Sombras Sunset",
+      "category": "ojos",
+      "price": 62000,
+      "compareAtPrice": 75000,
+      "description": "12 tonos mate y shimmer inspirados en el atardecer, alta pigmentación y fácil difuminado.",
+      "images": [
+        "/products/paleta-sombras-sunset.svg"
+      ],
+      "stock": 16,
+      "featured": true,
+      "active": true,
+      "rating": 4.9
+    },
+    {
+      "id": "p9",
+      "slug": "paleta-sombras-nude",
+      "name": "Paleta de Sombras Nude",
+      "category": "ojos",
+      "price": 60000,
+      "compareAtPrice": null,
+      "description": "Tonos neutros y tierra para looks de todos los días, perfecta para principiantes.",
+      "images": [
+        "/products/paleta-sombras-nude.svg"
+      ],
+      "stock": 19,
+      "featured": false,
+      "active": true,
+      "rating": 4.7
+    },
+    {
+      "id": "p10",
+      "slug": "set-brochas-pro",
+      "name": "Set de Brochas Pro x12",
+      "category": "brochas",
+      "price": 75000,
+      "compareAtPrice": 95000,
+      "description": "Set profesional de 12 brochas de cerdas suaves con estuche, para rostro y ojos.",
+      "images": [
+        "/products/set-brochas-pro.svg"
+      ],
+      "stock": 12,
+      "featured": true,
+      "active": true,
+      "rating": 4.9
+    },
+    {
+      "id": "p11",
+      "slug": "esponja-blending",
+      "name": "Esponja Blending Duo",
+      "category": "brochas",
+      "price": 22000,
+      "compareAtPrice": null,
+      "description": "Set de 2 esponjas multiuso para difuminar base, corrector y polvos sin dejar marcas.",
+      "images": [
+        "/products/esponja-blending.svg"
+      ],
+      "stock": 35,
+      "featured": false,
+      "active": true,
+      "rating": 4.5
+    },
+    {
+      "id": "p12",
+      "slug": "serum-hidratante",
+      "name": "Sérum Hidratante Glow",
+      "category": "skincare",
+      "price": 48000,
+      "compareAtPrice": null,
+      "description": "Sérum facial con ácido hialurónico para hidratación profunda y piel luminosa.",
+      "images": [
+        "/products/serum-hidratante.svg"
+      ],
+      "stock": 20,
+      "featured": true,
+      "active": true,
+      "rating": 4.8
+    },
+    {
+      "id": "p13",
+      "slug": "crema-glow",
+      "name": "Crema Facial Glow Boost",
+      "category": "skincare",
+      "price": 52000,
+      "compareAtPrice": 60000,
+      "description": "Crema hidratante de día con efecto luminoso instantáneo, ligera y de rápida absorción.",
+      "images": [
+        "/products/crema-glow.svg"
+      ],
+      "stock": 17,
+      "featured": false,
+      "active": true,
+      "rating": 4.7
+    },
+    {
+      "id": "p14",
+      "slug": "kit-mariangel-signature",
+      "name": "Kit Mariangel Signature",
+      "category": "sets",
+      "price": 120000,
+      "compareAtPrice": 150000,
+      "description": "Set exclusivo con labial, rubor, iluminador y mini paleta de sombras. El favorito para regalar.",
+      "images": [
+        "/products/kit-mariangel-signature.svg"
+      ],
+      "stock": 10,
+      "featured": true,
+      "active": true,
+      "rating": 5
+    },
+    {
+      "id": "p15",
+      "slug": "gel-cejas",
+      "name": "Gel Fijador de Cejas",
+      "category": "cejas",
+      "price": 26000,
+      "compareAtPrice": null,
+      "description": "Gel transparente de fijación todo el día con efecto laminado, no se cuartea.",
+      "images": [
+        "/products/gel-cejas.svg"
+      ],
+      "stock": 28,
+      "featured": false,
+      "active": true,
+      "rating": 4.6
+    }
+  ]
+}

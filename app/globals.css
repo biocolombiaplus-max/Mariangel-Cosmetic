@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffaf9;
+  --foreground: #3a1f38;
+
+  /* Mariangel Cosmetic brand palette — blush pink to deep plum/orchid */
+  --brand-blush-50: #fdf1f6;
+  --brand-blush-100: #f8dce7;
+  --brand-pink-200: #f0bfda;
+  --brand-pink-300: #e39fc6;
+  --brand-orchid-400: #ce7fb0;
+  --brand-orchid-500: #b5629b;
+  --brand-plum-600: #8e4c86;
+  --brand-plum-700: #6e3a6b;
+  --brand-deep-800: #4b2748;
+  --brand-deep-900: #331b33;
+  --brand-cream: #fff8f3;
+  --brand-gold: #d9a441;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-brand-blush-50: var(--brand-blush-50);
+  --color-brand-blush-100: var(--brand-blush-100);
+  --color-brand-pink-200: var(--brand-pink-200);
+  --color-brand-pink-300: var(--brand-pink-300);
+  --color-brand-orchid-400: var(--brand-orchid-400);
+  --color-brand-orchid-500: var(--brand-orchid-500);
+  --color-brand-plum-600: var(--brand-plum-600);
+  --color-brand-plum-700: var(--brand-plum-700);
+  --color-brand-deep-800: var(--brand-deep-800);
+  --color-brand-deep-900: var(--brand-deep-900);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-gold: var(--brand-gold);
+
+  --font-sans: var(--font-poppins);
+  --font-script: var(--font-script);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--brand-pink-300), var(--brand-orchid-500) 55%, var(--brand-plum-700));
+}
+
+.brand-gradient-soft {
+  background-image: linear-gradient(135deg, var(--brand-blush-50), var(--brand-blush-100) 45%, var(--brand-pink-200));
+}
+
+.brand-text-gradient {
+  background-image: linear-gradient(135deg, var(--brand-orchid-500), var(--brand-plum-700));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  scrollbar-width: none;
+}

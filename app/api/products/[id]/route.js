@@ -1,0 +1,72 @@
+import { NextResponse } from "next/server";
+import { readStore, updateStore, slugify } from "@/lib/store";
+import { isAdminAuthenticated } from "@/lib/auth";
+
+export async function GET(_request, { params }) {
+  const { id } = await params;
+  const data = await readStore();
+  const product = data.products.find((p) => p.id === id || p.slug === id);
+  if (!product) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+  return NextResponse.json(product);
+}
+
+export async function PUT(request, { params }) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  const { id } = await params;
+  const body = await request.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
+
+  const updated = await updateStore((data) => {
+    const idx = data.products.findIndex((p) => p.id === id);
+    if (idx === -1) return null;
+    const existing = data.products[idx];
+
+    let slug = existing.slug;
+    if (body.name && body.name !== existing.name) {
+      const baseSlug = slugify(body.name);
+      slug = baseSlug;
+      let i = 2;
+      while (data.products.some((p) => p.slug === slug && p.id !== id)) {
+        slug = `${baseSlug}-${i++}`;
+      }
+    }
+
+    const next = {
+      ...existing,
+      ...body,
+      slug,
+      price: body.price != null ? Number(body.price) : existing.price,
+      compareAtPrice:
+        body.compareAtPrice === "" || body.compareAtPrice == null
+          ? null
+          : Number(body.compareAtPrice),
+      stock: body.stock != null ? Number(body.stock) : existing.stock,
+      images: Array.isArray(body.images) ? body.images : existing.images,
+      id: existing.id,
+    };
+    data.products[idx] = next;
+    return next;
+  });
+
+  if (!updated) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+  return NextResponse.json(updated);
+}
+
+export async function DELETE(_request, { params }) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  const { id } = await params;
+
+  const removed = await updateStore((data) => {
+    const idx = data.products.findIndex((p) => p.id === id);
+    if (idx === -1) return false;
+    data.products.splice(idx, 1);
+    return true;
+  });
+
+  if (!removed) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+  return NextResponse.json({ ok: true });
+}
