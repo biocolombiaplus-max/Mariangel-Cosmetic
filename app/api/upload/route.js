@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { put } from "@vercel/blob";
 import { isAdminAuthenticated } from "@/lib/auth";
+import { blobEnabled } from "@/lib/blob";
 
 const ALLOWED_TYPES = {
   "image/png": "png",
@@ -33,6 +35,17 @@ export async function POST(request) {
 
   const ext = ALLOWED_TYPES[file.type];
   const filename = `${randomUUID()}.${ext}`;
+
+  if (blobEnabled()) {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const blob = await put(`uploads/${filename}`, buffer, {
+      access: "public",
+      contentType: file.type,
+      addRandomSuffix: false,
+    });
+    return NextResponse.json({ url: blob.url }, { status: 201 });
+  }
+
   const uploadsDir = path.join(process.cwd(), "public", "uploads");
   await fs.mkdir(uploadsDir, { recursive: true });
 

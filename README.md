@@ -34,11 +34,24 @@ ADMIN_SECRET=cambia-este-secreto-en-produccion-por-uno-largo-y-aleatorio
 
 ## Datos y almacenamiento
 
-- El catálogo y el contenido de la landing viven en `data/store.json` (se lee/escribe desde el servidor).
-- Las imágenes subidas desde el panel administrativo se guardan en `public/uploads/`.
+- En **local** (o cualquier host con disco persistente, como un VPS/Railway/Render), el catálogo y contenido viven en `data/store.json` y las imágenes subidas en `public/uploads/`.
+- En **Vercel**, el proyecto detecta automáticamente si hay un Blob Store conectado (variable `BLOB_READ_WRITE_TOKEN`) y en ese caso guarda ahí el catálogo/contenido y las imágenes subidas, para que persistan entre despliegues. Ver sección "Desplegar en Vercel" abajo — no requiere tocar código.
 - Los productos de ejemplo usan imágenes ilustrativas generadas en `public/products/` y `public/brand/` (ver `scripts/gen-placeholders.mjs`). Reemplázalas por fotos reales desde el panel administrativo (Productos → editar → subir fotos) y desde Contenido de la tienda (portada, promoción, Instagram, logo).
 
-⚠️ **Nota sobre despliegue:** si despliegas en una plataforma serverless con sistema de archivos efímero (por ejemplo Vercel), tanto `data/store.json` como `public/uploads/` se reiniciarán en cada despliegue. Para producción real se recomienda migrar a una base de datos (ej. Postgres/Supabase) y a un servicio de almacenamiento de imágenes (ej. Vercel Blob, S3, Cloudinary). Para un VPS o servidor Node persistente (Railway, Render, un droplet, etc.) funciona tal cual.
+## Desplegar en Vercel (paso a paso)
+
+1. **Sube el proyecto a GitHub** (si ya está en un repo, salta este paso).
+2. En [vercel.com](https://vercel.com), inicia sesión con tu cuenta de GitHub.
+3. **Add New… → Project** y selecciona el repositorio `Mariangel-Cosmetic`.
+4. En "Configure Project" deja el framework en **Next.js** (se detecta solo) y dale a **Deploy** — esto te da ya una primera URL pública (ej. `mariangel-cosmetic.vercel.app`).
+5. Antes de usar el panel admin en producción, agrega las variables de entorno en **Project → Settings → Environment Variables**:
+   - `ADMIN_PASSWORD` → la contraseña que quieras para entrar a `/admin`.
+   - `ADMIN_SECRET` → un texto largo y aleatorio (ej. generado con `openssl rand -hex 32`).
+6. **Conecta el almacenamiento (para que el admin funcione de verdad):** en el proyecto en Vercel ve a **Storage → Create Database/Store → Blob** y conéctalo a este proyecto. Vercel agrega automáticamente la variable `BLOB_READ_WRITE_TOKEN`.
+7. Ve a **Deployments** y dale **Redeploy** al último despliegue (para que tome las variables nuevas).
+8. Entra a `https://tu-proyecto.vercel.app/admin`, inicia sesión con tu `ADMIN_PASSWORD` y ya puedes agregar productos, fotos y editar el contenido — quedará guardado en Vercel Blob y sobrevive a futuros despliegues.
+
+Cada vez que hagas `git push` a la rama conectada, Vercel vuelve a desplegar automáticamente.
 
 ## WhatsApp Business
 
