@@ -11,18 +11,19 @@ const LINKS = [
   { href: "/admin/contenido", label: "Contenido de la tienda", icon: "🎨" },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ onNavigate }) {
   const pathname = usePathname();
   const router = useRouter();
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
+    onNavigate?.();
     router.push("/admin/login");
     router.refresh();
   }
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-brand-blush-100 bg-white px-4 py-6">
+    <aside className="flex h-full flex-col overflow-y-auto border-r border-brand-blush-100 bg-white px-4 py-6">
       <div className="mb-8 px-2">
         <BrandLogo size="sm" />
       </div>
@@ -33,6 +34,7 @@ export default function AdminSidebar() {
             <Link
               key={l.href}
               href={l.href}
+              onClick={onNavigate}
               className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                 active
                   ? "bg-brand-plum-600 text-white"
@@ -49,6 +51,7 @@ export default function AdminSidebar() {
         <Link
           href="/"
           target="_blank"
+          onClick={onNavigate}
           className="rounded-xl px-3 py-2.5 text-sm font-medium text-brand-deep-900/70 hover:bg-brand-blush-50"
         >
           🔗 Ver tienda
