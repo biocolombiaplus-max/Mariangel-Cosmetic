@@ -5,19 +5,46 @@ import { money } from "@/lib/format";
 import { useCart } from "@/components/cart-context";
 import CheckoutModal from "@/components/checkout-modal";
 import StarRating from "@/components/star-rating";
+import { findVariant, variantLabel } from "@/lib/variants";
 
 export default function ProductDetail({ product, whatsapp, storeName }) {
   const { addItem } = useCart();
+  const hasVariants = product.options?.length > 0;
+
+  const [selected, setSelected] = useState(() =>
+    hasVariants && product.variants?.[0] ? { ...product.variants[0].values } : {}
+  );
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
   const [added, setAdded] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
-  const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const buyNowItems = [
-    { id: product.id, name: product.name, price: product.price, qty },
-  ];
-  const buyNowTotal = product.price * qty;
+  const selectedVariant = hasVariants ? findVariant(product.variants, selected) : null;
+  const effectivePrice = selectedVariant?.price ?? product.price;
+  const effectiveStock = selectedVariant ? selectedVariant.stock : product.stock;
+  const hasDiscount = product.compareAtPrice && product.compareAtPrice > effectivePrice;
+  const canOrder = (!hasVariants || Boolean(selectedVariant)) && effectiveStock > 0;
+
+  const variantSuffix = selectedVariant ? ` (${variantLabel(selectedVariant.values)})` : "";
+  const cartProduct = {
+    id: selectedVariant ? `${product.id}::${selectedVariant.id}` : product.id,
+    slug: product.slug,
+    name: `${product.name}${variantSuffix}`,
+    price: effectivePrice,
+    images: [selectedVariant?.image || product.images[activeImg]],
+  };
+  const buyNowTotal = effectivePrice * qty;
+
+  function selectOptionValue(optionName, value) {
+    const nextSelected = { ...selected, [optionName]: value };
+    setSelected(nextSelected);
+    setQty(1);
+    const variant = findVariant(product.variants, nextSelected);
+    if (variant?.image) {
+      const idx = product.images.indexOf(variant.image);
+      if (idx !== -1) setActiveImg(idx);
+    }
+  }
 
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2">
@@ -52,7 +79,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
         <StarRating rating={product.rating} />
         <h1 className="mt-2 text-3xl font-extrabold text-brand-deep-900">{product.name}</h1>
         <div className="mt-3 flex items-baseline gap-3">
-          <span className="text-2xl font-bold text-brand-plum-700">{money(product.price)}</span>
+          <span className="text-2xl font-bold text-brand-plum-700">{money(effectivePrice)}</span>
           {hasDiscount && (
             <span className="text-base text-brand-plum-700/50 line-through">
               {money(product.compareAtPrice)}
@@ -61,9 +88,43 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
         </div>
         <p className="mt-5 leading-relaxed text-brand-deep-900/70">{product.description}</p>
 
+        {hasVariants && (
+          <div className="mt-5 space-y-4">
+            {product.options.map((opt) => (
+              <div key={opt.name}>
+                <p className="mb-1.5 text-sm font-semibold text-brand-deep-900">
+                  {opt.name}
+                  {selected[opt.name] && (
+                    <span className="font-normal text-brand-deep-900/60"> · {selected[opt.name]}</span>
+                  )}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {opt.values.map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => selectOptionValue(opt.name, val)}
+                      className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                        selected[opt.name] === val
+                          ? "border-brand-plum-600 bg-brand-plum-600 text-white"
+                          : "border-brand-pink-200 text-brand-deep-900 hover:bg-brand-blush-50"
+                      }`}
+                    >
+                      {val}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {!selectedVariant && (
+              <p className="text-xs text-red-600">Esta combinación no está disponible.</p>
+            )}
+          </div>
+        )}
+
         <p className="mt-4 text-sm">
-          {product.stock > 0 ? (
-            <span className="text-green-700">✔ Disponible ({product.stock} en stock)</span>
+          {effectiveStock > 0 ? (
+            <span className="text-green-700">✔ Disponible ({effectiveStock} en stock)</span>
           ) : (
             <span className="text-red-600">Agotado por ahora</span>
           )}
@@ -85,11 +146,11 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
 
           <button
             onClick={() => {
-              addItem(product, qty);
+              addItem(cartProduct, qty);
               setAdded(true);
               setTimeout(() => setAdded(false), 2000);
             }}
-            disabled={product.stock <= 0}
+            disabled={!canOrder}
             className="flex-1 rounded-full bg-brand-plum-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-plum-700 disabled:bg-brand-pink-200"
           >
             {added ? "¡Agregado! 🛍️" : "Agregar al carrito"}
@@ -98,7 +159,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
 
         <button
           onClick={() => setCheckoutOpen(true)}
-          disabled={product.stock <= 0}
+          disabled={!canOrder}
           className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-sm font-semibold text-white shadow-sm hover:brightness-95 disabled:opacity-60"
         >
           Comprar ya por WhatsApp
@@ -110,7 +171,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
         onClose={() => setCheckoutOpen(false)}
         whatsapp={whatsapp}
         storeName={storeName}
-        items={buyNowItems}
+        items={[{ id: cartProduct.id, name: cartProduct.name, price: effectivePrice, qty }]}
         total={buyNowTotal}
       />
     </div>

@@ -2,6 +2,18 @@ import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { publicProduct } from "@/lib/products";
+import { normalizeOptions } from "@/lib/variants";
+
+function sanitizeVariants(rawVariants) {
+  if (!Array.isArray(rawVariants)) return [];
+  return rawVariants.map((v, i) => ({
+    id: v.id || `v${Date.now()}-${i}`,
+    values: v.values || {},
+    price: v.price === "" || v.price == null ? null : Number(v.price),
+    stock: Number(v.stock) || 0,
+    image: v.image || "",
+  }));
+}
 
 export async function GET() {
   const data = await readStore();
@@ -40,6 +52,8 @@ export async function POST(request) {
         images: Array.isArray(body.images) ? body.images : [],
         stock: Number(body.stock) || 0,
         cost: body.cost ? Number(body.cost) : 0,
+        options: normalizeOptions(body.options),
+        variants: sanitizeVariants(body.variants),
         featured: Boolean(body.featured),
         active: body.active !== false,
         rating: body.rating ? Number(body.rating) : 5,

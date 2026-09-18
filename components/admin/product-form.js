@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/admin/image-uploader";
+import ProductVariants from "@/components/admin/product-variants";
 import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
 
@@ -15,6 +16,8 @@ const empty = {
   description: "",
   images: [],
   stock: 0,
+  options: [],
+  variants: [],
   featured: false,
   active: true,
 };
@@ -190,6 +193,14 @@ export default function ProductForm({ product, categories }) {
           Visible en la tienda
         </label>
       </div>
+
+      <ProductVariants
+        options={form.options}
+        variants={form.variants}
+        images={form.images}
+        basePrice={form.price}
+        onChange={({ options, variants }) => setForm((f) => ({ ...f, options, variants }))}
+      />
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 

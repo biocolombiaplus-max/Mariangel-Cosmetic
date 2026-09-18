@@ -2,6 +2,18 @@ import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { publicProduct } from "@/lib/products";
+import { normalizeOptions } from "@/lib/variants";
+
+function sanitizeVariants(rawVariants) {
+  if (!Array.isArray(rawVariants)) return [];
+  return rawVariants.map((v, i) => ({
+    id: v.id || `v${Date.now()}-${i}`,
+    values: v.values || {},
+    price: v.price === "" || v.price == null ? null : Number(v.price),
+    stock: Number(v.stock) || 0,
+    image: v.image || "",
+  }));
+}
 
 export async function GET(_request, { params }) {
   const { id } = await params;
@@ -48,6 +60,9 @@ export async function PUT(request, { params }) {
         stock: body.stock != null ? Number(body.stock) : existing.stock,
         cost: body.cost != null ? Number(body.cost) : existing.cost || 0,
         images: Array.isArray(body.images) ? body.images : existing.images,
+        options: body.options !== undefined ? normalizeOptions(body.options) : existing.options || [],
+        variants:
+          body.variants !== undefined ? sanitizeVariants(body.variants) : existing.variants || [],
         id: existing.id,
       };
       data.products[idx] = next;
