@@ -57,6 +57,22 @@ ADMIN_SECRET=cambia-este-secreto-en-produccion-por-uno-largo-y-aleatorio
 
 Cada vez que hagas `git push` a la rama conectada, Vercel vuelve a desplegar automáticamente.
 
+## Almacenamiento de imágenes (Cloudinary, recomendado)
+
+Vercel Blob es gratis solo hasta cierto límite de almacenamiento/tráfico, y si lo superas (o falla el método de pago) tu Blob Store puede quedar **suspendido** — verás un error como `Vercel Blob: This store has been suspended.` al subir una foto. Para que tu tienda nunca dependa de un solo proveedor, puedes conectar **Cloudinary** (tiene un plan gratuito pensado justamente para fotos de productos — 25GB de almacenamiento y 25GB de tráfico al mes) y el sistema lo usa automáticamente en vez de Blob:
+
+1. Crea una cuenta gratis en [cloudinary.com](https://cloudinary.com).
+2. En tu **Dashboard** de Cloudinary copia: **Cloud name**, **API Key** y **API Secret**.
+3. En Vercel, ve a tu proyecto → **Settings → Environment Variables** y agrega:
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
+4. **Redeploy** el proyecto (Deployments → ⋯ → Redeploy).
+
+Listo — desde ese momento, todas las fotos que subas desde el panel administrativo se guardan en Cloudinary en vez de Blob, sin tocar nada más. Si ya tenías Blob conectado, no pasa nada: Cloudinary toma prioridad automáticamente cuando está configurado, y si Cloudinary llegara a fallar, el sistema reintenta con Blob como respaldo.
+
+**¿Ya tienes el error de "store suspended" en Vercel Blob?** Revisa en tu proyecto de Vercel → **Storage** → tu Blob Store: normalmente hay un aviso explicando el motivo (casi siempre falta de método de pago o límite de uso superado) con un botón para agregar una tarjeta o reactivarlo. Conectar Cloudinary (arriba) te permite seguir subiendo fotos sin esperar a resolver eso.
+
 ## WhatsApp Business
 
 El número de WhatsApp (`3005089954`) se gestiona desde **Contenido de la tienda → General** en el panel administrativo, en formato internacional sin espacios ni `+` (ej. `573005089954`).

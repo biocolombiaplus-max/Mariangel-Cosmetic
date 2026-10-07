@@ -4,7 +4,11 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
 import { isAdminAuthenticated } from "@/lib/auth";
-import { blobEnabled, isVercel, BLOB_NOT_CONFIGURED_MESSAGE } from "@/lib/blob";
+import { blobEnabled, isVercel } from "@/lib/blob";
+import { cloudinaryEnabled, uploadToCloudinary } from "@/lib/cloudinary";
+
+const NO_IMAGE_STORAGE_MESSAGE =
+  "Falta conectar un almacenamiento de imágenes para poder subir fotos en producción. Lo más confiable es Cloudinary (gratis): crea una cuenta en cloudinary.com, copia tu Cloud name/API Key/API Secret y agrégalos como variables de entorno CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY y CLOUDINARY_API_SECRET en tu proyecto de Vercel, luego redeploy. (Alternativa: Storage → Blob en Vercel — ver README).";
 
 const ALLOWED_TYPES = {
   "image/png": "png",
@@ -36,9 +40,23 @@ export async function POST(request) {
 
     const ext = ALLOWED_TYPES[file.type];
     const filename = `${randomUUID()}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // Cloudinary is preferred when configured — a dedicated image CDN with
+    // a generous free tier, so uploads don't depend on Vercel Blob's
+    // storage/bandwidth quota or billing state.
+    if (cloudinaryEnabled()) {
+      try {
+        const url = await uploadToCloudinary(buffer, { folder: "mariangel/uploads" });
+        return NextResponse.json({ url }, { status: 201 });
+      } catch (err) {
+        // Fall through to Blob (if also configured) instead of failing
+        // outright — never let one provider's outage block uploads alone.
+        if (!blobEnabled()) throw err;
+      }
+    }
 
     if (blobEnabled()) {
-      const buffer = Buffer.from(await file.arrayBuffer());
       const blob = await put(`uploads/${filename}`, buffer, {
         access: "public",
         contentType: file.type,
@@ -48,14 +66,13 @@ export async function POST(request) {
     }
 
     if (isVercel()) {
-      // No Blob store connected: public/uploads is read-only here.
-      return NextResponse.json({ error: BLOB_NOT_CONFIGURED_MESSAGE }, { status: 500 });
+      // Neither Cloudinary nor Blob configured: public/uploads is
+      // read-only here.
+      return NextResponse.json({ error: NO_IMAGE_STORAGE_MESSAGE }, { status: 500 });
     }
 
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
-
-    const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(path.join(uploadsDir, filename), buffer);
 
     return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 });
