@@ -38,8 +38,8 @@ ADMIN_SECRET=cambia-este-secreto-en-produccion-por-uno-largo-y-aleatorio
 
 ## Datos y almacenamiento
 
-- En **local** (o cualquier host con disco persistente, como un VPS/Railway/Render), el catálogo y contenido viven en `data/store.json` y las imágenes subidas en `public/uploads/`.
-- En **Vercel**, el proyecto detecta automáticamente si hay un Blob Store conectado (variable `BLOB_READ_WRITE_TOKEN`) y en ese caso guarda ahí el catálogo/contenido y las imágenes subidas, para que persistan entre despliegues. Ver sección "Desplegar en Vercel" abajo — no requiere tocar código.
+- En **local** (o cualquier host con disco persistente, como un VPS/Railway/Render), el catálogo, el contenido y las imágenes subidas viven en `data/store.json` y `public/uploads/`.
+- En **Vercel**, el proyecto usa **Cloudinary** (recomendado) o **Vercel Blob** — lo que esté configurado — para guardar ahí el catálogo/contenido y las imágenes subidas, para que persistan entre despliegues. Ver "Desplegar en Vercel" y "Almacenamiento (Cloudinary, recomendado)" abajo — no requiere tocar código.
 - Los productos de ejemplo usan imágenes ilustrativas generadas en `public/products/` y `public/brand/` (ver `scripts/gen-placeholders.mjs`). Reemplázalas por fotos reales desde el panel administrativo (Productos → editar → subir fotos) y desde Contenido de la tienda (portada, promoción, Instagram, logo).
 
 ## Desplegar en Vercel (paso a paso)
@@ -51,27 +51,33 @@ ADMIN_SECRET=cambia-este-secreto-en-produccion-por-uno-largo-y-aleatorio
 5. Antes de usar el panel admin en producción, agrega las variables de entorno en **Project → Settings → Environment Variables**:
    - `ADMIN_PASSWORD` → la contraseña que quieras para entrar a `/admin`.
    - `ADMIN_SECRET` → un texto largo y aleatorio (ej. generado con `openssl rand -hex 32`).
-6. **Conecta el almacenamiento (para que el admin funcione de verdad):** en el proyecto en Vercel ve a **Storage → Create Database/Store → Blob** y conéctalo a este proyecto. Vercel agrega automáticamente la variable `BLOB_READ_WRITE_TOKEN`.
+6. **Conecta el almacenamiento (para que el admin funcione de verdad):** sigue la sección siguiente ("Almacenamiento") para conectar Cloudinary — es el camino recomendado.
 7. Ve a **Deployments** y dale **Redeploy** al último despliegue (para que tome las variables nuevas).
-8. Entra a `https://tu-proyecto.vercel.app/admin`, inicia sesión con tu `ADMIN_PASSWORD` y ya puedes agregar productos, fotos y editar el contenido — quedará guardado en Vercel Blob y sobrevive a futuros despliegues.
+8. Entra a `https://tu-proyecto.vercel.app/admin`, inicia sesión con tu `ADMIN_PASSWORD` y ya puedes agregar productos, fotos y editar el contenido — quedará guardado y sobrevive a futuros despliegues.
 
 Cada vez que hagas `git push` a la rama conectada, Vercel vuelve a desplegar automáticamente.
 
-## Almacenamiento de imágenes (Cloudinary, recomendado)
+## Almacenamiento (Cloudinary, recomendado)
 
-Vercel Blob es gratis solo hasta cierto límite de almacenamiento/tráfico, y si lo superas (o falla el método de pago) tu Blob Store puede quedar **suspendido** — verás un error como `Vercel Blob: This store has been suspended.` al subir una foto. Para que tu tienda nunca dependa de un solo proveedor, puedes conectar **Cloudinary** (tiene un plan gratuito pensado justamente para fotos de productos — 25GB de almacenamiento y 25GB de tráfico al mes) y el sistema lo usa automáticamente en vez de Blob:
+El catálogo, el contenido de la landing y las fotos que subas necesitan guardarse en algún lado persistente en Vercel. Hay dos opciones:
+
+- **Cloudinary** (recomendado): un plan gratuito pensado justamente para tiendas — 25GB de almacenamiento y 25GB de tráfico al mes — y es lo que usa este proyecto para **todo**: fotos de productos y el catálogo/contenido completo.
+- **Vercel Blob**: funciona, pero es gratis solo hasta cierto límite de almacenamiento/tráfico, y si lo superas (o falla el método de pago) tu Blob Store puede quedar **suspendido** — verás errores como `Vercel Blob: This store has been suspended.` al subir una foto o al guardar cambios.
+
+**Para conectar Cloudinary:**
 
 1. Crea una cuenta gratis en [cloudinary.com](https://cloudinary.com).
-2. En tu **Dashboard** de Cloudinary copia: **Cloud name**, **API Key** y **API Secret**.
-3. En Vercel, ve a tu proyecto → **Settings → Environment Variables** y agrega:
+2. En tu **Dashboard** de Cloudinary (o en **Settings → API Keys**) copia: **Cloud name**, **API Key** y **API Secret**.
+3. En Vercel, ve a tu proyecto → **Settings → Environment Variables** y agrega (marca Production, Preview y Development):
    - `CLOUDINARY_CLOUD_NAME`
    - `CLOUDINARY_API_KEY`
    - `CLOUDINARY_API_SECRET`
-4. **Redeploy** el proyecto (Deployments → ⋯ → Redeploy).
+4. Ve a **Deployments** → en el despliegue más reciente, **⋯ → Redeploy**.
+5. Entra al panel admin y prueba subir una foto o guardar un producto — debería funcionar sin errores.
 
-Listo — desde ese momento, todas las fotos que subas desde el panel administrativo se guardan en Cloudinary en vez de Blob, sin tocar nada más. Si ya tenías Blob conectado, no pasa nada: Cloudinary toma prioridad automáticamente cuando está configurado, y si Cloudinary llegara a fallar, el sistema reintenta con Blob como respaldo.
+Una vez configurado, Cloudinary toma prioridad automáticamente sobre Vercel Blob (no hace falta desconectar Blob si ya lo tenías). Si en el futuro Cloudinary llegara a fallar momentáneamente, el sistema nunca sobrescribe datos a ciegas: reintenta, y si no puede confirmar el estado real, avisa con un error claro en vez de arriesgar tu información.
 
-**¿Ya tienes el error de "store suspended" en Vercel Blob?** Revisa en tu proyecto de Vercel → **Storage** → tu Blob Store: normalmente hay un aviso explicando el motivo (casi siempre falta de método de pago o límite de uso superado) con un botón para agregar una tarjeta o reactivarlo. Conectar Cloudinary (arriba) te permite seguir subiendo fotos sin esperar a resolver eso.
+**¿Ya tienes el error de "store suspended" en Vercel Blob?** Conectar Cloudinary (arriba) resuelve el problema sin depender de Blob en absoluto — no necesitas arreglar la suspensión de Blob para seguir usando tu tienda.
 
 ## WhatsApp Business
 
