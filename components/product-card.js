@@ -23,8 +23,18 @@ export default function ProductCard({ product }) {
         <img
           src={product.images?.[0]}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className={`h-full w-full object-cover transition-opacity duration-300 ${
+            product.images?.[1] ? "group-hover:opacity-0" : ""
+          }`}
         />
+        {product.images?.[1] && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.images[1]}
+            alt=""
+            className="absolute inset-0 h-full w-full scale-105 object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        )}
         {hasDiscount && (
           <span className="absolute left-3 top-3 rounded-full bg-brand-plum-700 px-2.5 py-1 text-[11px] font-bold text-white">
             -{discountPct}%

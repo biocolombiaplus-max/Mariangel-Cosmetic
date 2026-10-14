@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { mergeVariants, variantLabel } from "@/lib/variants";
+import { mergeVariants, normalizeOptions, variantLabel } from "@/lib/variants";
 
 export default function ProductVariants({ options, variants, images, basePrice, onChange }) {
   const [enabled, setEnabled] = useState((options || []).length > 0);
@@ -13,15 +13,15 @@ export default function ProductVariants({ options, variants, images, basePrice, 
   );
 
   function currentOptions() {
-    return draftOptions
-      .map((o) => ({
+    // normalizeOptions also merges rows that share a name (e.g. two
+    // separate "Tono" rows) into one option with combined values, so the
+    // storefront never shows the same option as two broken groups.
+    return normalizeOptions(
+      draftOptions.map((o) => ({
         name: o.name.trim(),
-        values: o.valuesText
-          .split(",")
-          .map((v) => v.trim())
-          .filter(Boolean),
+        values: o.valuesText.split(","),
       }))
-      .filter((o) => o.name && o.values.length > 0);
+    );
   }
 
   function updateDraft(i, field, value) {
