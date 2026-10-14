@@ -18,6 +18,12 @@ export async function PUT(request, { params }) {
       const order = data.orders[idx];
 
       if (body.status && STAGE_KEYS.includes(body.status)) {
+        // Captures the moment a sale is actually confirmed, so commission
+        // cycles (see lib/commission.js) are based on when it was won, not
+        // when the lead first came in.
+        if (body.status === "ganado" && order.status !== "ganado") {
+          order.wonAt = new Date().toISOString();
+        }
         order.status = body.status;
       }
       if (Array.isArray(body.tags)) {

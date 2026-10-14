@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { readStore, money } from "@/lib/store";
 import { computeStats } from "@/lib/analytics";
+import { computeCommission } from "@/lib/commission";
 import { STAGES } from "@/lib/crm";
 
 export default async function AdminHomePage() {
   const data = await readStore();
   const { products } = data;
   const stats = computeStats(data);
+  const commission = computeCommission(data);
 
   const kpis = [
     { label: "Ingresos confirmados", value: money(stats.revenue), icon: "💰", highlight: true },
@@ -112,6 +114,24 @@ export default async function AdminHomePage() {
           )}
         </div>
       </div>
+
+      <Link
+        href="/admin/comision"
+        className="brand-gradient relative mt-8 flex flex-wrap items-center justify-between gap-4 overflow-hidden rounded-2xl p-6 text-white shadow-sm transition-opacity hover:opacity-95"
+      >
+        <span className="pointer-events-none absolute -right-6 -top-6 text-7xl opacity-10">💼</span>
+        <div>
+          <p className="text-xs font-medium text-white/80">Comisión Biomarketing</p>
+          <p className="mt-1 text-2xl font-extrabold">{money(commission.totalCommission)}</p>
+          <p className="mt-1 text-xs text-white/80">
+            {money(commission.currentCycleCommission)} en el ciclo actual · próximo pago{" "}
+            {commission.daysUntilPayment === 0
+              ? "hoy"
+              : `en ${commission.daysUntilPayment} ${commission.daysUntilPayment === 1 ? "día" : "días"}`}
+          </p>
+        </div>
+        <span className="rounded-full bg-white/15 px-4 py-2 text-xs font-semibold">Ver detalle →</span>
+      </Link>
 
       <div className="mt-8 flex flex-wrap gap-4">
         <Link
