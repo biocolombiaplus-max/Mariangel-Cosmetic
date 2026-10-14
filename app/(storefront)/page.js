@@ -3,8 +3,10 @@ export const dynamic = "force-dynamic";
 import { readStore } from "@/lib/store";
 import { publicProduct } from "@/lib/products";
 import Hero from "@/components/sections/hero";
+import TrustBar from "@/components/sections/trust-bar";
 import CategoryPills from "@/components/sections/category-pills";
 import FeaturedProducts from "@/components/sections/featured-products";
+import HowToBuy from "@/components/sections/how-to-buy";
 import About from "@/components/sections/about";
 import InstagramGallery from "@/components/sections/instagram-gallery";
 import Testimonials from "@/components/sections/testimonials";
@@ -20,8 +22,10 @@ export default async function HomePage() {
   return (
     <>
       <Hero slides={data.sections.hero} />
+      <TrustBar />
       <CategoryPills categories={data.categories} />
       <FeaturedProducts products={featured} />
+      <HowToBuy />
       <About about={data.sections.about} />
       <InstagramGallery
         instagram={data.sections.instagram}

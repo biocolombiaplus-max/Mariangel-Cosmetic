@@ -15,6 +15,19 @@ function sanitizeVariants(rawVariants) {
   }));
 }
 
+function sanitizeTags(rawTags) {
+  if (Array.isArray(rawTags)) {
+    return rawTags.map((t) => String(t).trim()).filter(Boolean);
+  }
+  if (typeof rawTags === "string") {
+    return rawTags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 export async function GET() {
   const data = await readStore();
   const authed = await isAdminAuthenticated();
@@ -52,6 +65,10 @@ export async function POST(request) {
         images: Array.isArray(body.images) ? body.images : [],
         stock: Number(body.stock) || 0,
         cost: body.cost ? Number(body.cost) : 0,
+        sku: (body.sku || "").trim(),
+        tags: sanitizeTags(body.tags),
+        seoTitle: (body.seoTitle || "").trim(),
+        seoDescription: (body.seoDescription || "").trim(),
         options: normalizeOptions(body.options),
         variants: sanitizeVariants(body.variants),
         featured: Boolean(body.featured),

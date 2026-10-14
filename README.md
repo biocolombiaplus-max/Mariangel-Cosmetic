@@ -4,12 +4,13 @@ Landing page + tienda online + panel administrativo para **Mariangel Cosmetic**,
 
 ## ¿Qué incluye?
 
-- **Landing page** con hero rotativo, categorías, productos destacados, banner de promoción, sección "sobre nosotros", galería estilo Instagram, testimonios y CTA de WhatsApp.
+- **Landing page** con hero rotativo, barra de confianza (envío, asesoría, compra segura, clientas felices), categorías, productos destacados, banner de promoción, sección "Cómo comprar" en 3 pasos, "sobre nosotros", galería estilo Instagram, testimonios con calificación promedio y CTA de WhatsApp.
 - **Tienda (`/tienda`)** con filtro por categoría, buscador y orden por precio/destacados.
 - **Ficha de producto (`/producto/[slug]`)** con galería, selector de cantidad, "agregar al carrito" y "comprar ya por WhatsApp".
 - **Carrito** persistente (localStorage) con checkout que arma automáticamente el mensaje de WhatsApp con el resumen del pedido.
 - **Panel administrativo (`/admin`)**, protegido con contraseña, estilo Shopify:
   - CRUD de productos con subida de fotos, con un campo de **costo interno** (oculto para tus clientes) para calcular tu ganancia real.
+  - **Formulario de producto estilo Shopify**, organizado por secciones (fotos, título/descripción, precios, variantes, SEO, estado, inventario, organización) con explicaciones de dónde aparece cada campo en la tienda — incluye **SKU**, **etiquetas** (se muestran como insignias en la ficha del producto) y **SEO** (título/descripción personalizados para Google, con vista previa en vivo).
   - **Variantes estilo Shopify** (color, tamaño, etc.): defines las opciones y sus valores, el sistema genera las combinaciones, y ajustas precio/stock/foto por variante. En la tienda, la clienta elige la variante y el precio, la foto y el stock se actualizan automáticamente.
   - Editor de contenido de la landing por secciones (portada/hero, promoción, "sobre nosotros", galería de Instagram, testimonios, pie de página) y datos generales (logo, nombre, WhatsApp, Instagram).
   - **Dashboard de resumen** con ingresos confirmados, ganancia estimada, valor en negociación, tasa de cierre y pedidos recientes.

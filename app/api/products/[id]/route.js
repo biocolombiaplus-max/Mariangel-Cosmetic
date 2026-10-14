@@ -15,6 +15,19 @@ function sanitizeVariants(rawVariants) {
   }));
 }
 
+function sanitizeTags(rawTags) {
+  if (Array.isArray(rawTags)) {
+    return rawTags.map((t) => String(t).trim()).filter(Boolean);
+  }
+  if (typeof rawTags === "string") {
+    return rawTags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 export async function GET(_request, { params }) {
   const { id } = await params;
   const data = await readStore();
@@ -60,6 +73,14 @@ export async function PUT(request, { params }) {
         stock: body.stock != null ? Number(body.stock) : existing.stock,
         cost: body.cost != null ? Number(body.cost) : existing.cost || 0,
         images: Array.isArray(body.images) ? body.images : existing.images,
+        sku: body.sku !== undefined ? String(body.sku).trim() : existing.sku || "",
+        tags: body.tags !== undefined ? sanitizeTags(body.tags) : existing.tags || [],
+        seoTitle:
+          body.seoTitle !== undefined ? String(body.seoTitle).trim() : existing.seoTitle || "",
+        seoDescription:
+          body.seoDescription !== undefined
+            ? String(body.seoDescription).trim()
+            : existing.seoDescription || "",
         options: body.options !== undefined ? normalizeOptions(body.options) : existing.options || [],
         variants:
           body.variants !== undefined ? sanitizeVariants(body.variants) : existing.variants || [],

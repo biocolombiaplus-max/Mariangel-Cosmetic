@@ -77,6 +77,18 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
 
       <div>
         <StarRating rating={product.rating} />
+        {product.tags?.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {product.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-brand-blush-100 px-3 py-1 text-xs font-semibold text-brand-plum-700"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
         <h1 className="mt-2 text-3xl font-extrabold text-brand-deep-900">{product.name}</h1>
         <div className="mt-3 flex items-baseline gap-3">
           <span className="text-2xl font-bold text-brand-plum-700">{money(effectivePrice)}</span>
@@ -128,6 +140,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
           ) : (
             <span className="text-red-600">Agotado por ahora</span>
           )}
+          {product.sku && <span className="ml-3 text-brand-deep-900/40">SKU: {product.sku}</span>}
         </p>
 
         <div className="mt-6 flex items-center gap-3">

@@ -11,9 +11,16 @@ export async function generateMetadata({ params }) {
   const data = await readStore();
   const product = data.products.find((p) => p.slug === slug);
   if (!product) return {};
+  const title = product.seoTitle || `${product.name} | Mariangel Cosmetic`;
+  const description = product.seoDescription || product.description;
   return {
-    title: `${product.name} | Mariangel Cosmetic`,
-    description: product.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: product.images?.[0] ? [product.images[0]] : undefined,
+    },
   };
 }
 

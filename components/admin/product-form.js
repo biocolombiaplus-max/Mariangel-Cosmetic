@@ -16,16 +16,37 @@ const empty = {
   description: "",
   images: [],
   stock: 0,
+  sku: "",
+  tags: [],
+  seoTitle: "",
+  seoDescription: "",
   options: [],
   variants: [],
   featured: false,
   active: true,
 };
 
+function Field({ label, hint, children }) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-brand-deep-900">{label}</label>
+      {hint && <p className="mb-1.5 text-xs text-brand-deep-900/50">{hint}</p>}
+      {children}
+    </div>
+  );
+}
+
+const inputClass =
+  "w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600";
+
 export default function ProductForm({ product, categories }) {
   const router = useRouter();
   const isEdit = Boolean(product);
-  const [form, setForm] = useState(product ? { ...empty, ...product } : empty);
+  const [form, setForm] = useState(
+    product
+      ? { ...empty, ...product, tags: (product.tags || []).join(", ") }
+      : { ...empty, tags: "" }
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -44,6 +65,10 @@ export default function ProductForm({ product, categories }) {
         compareAtPrice: form.compareAtPrice === "" ? null : Number(form.compareAtPrice),
         stock: Number(form.stock) || 0,
         cost: Number(form.cost) || 0,
+        tags: form.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
       };
       const res = await fetch(isEdit ? `/api/products/${product.id}` : "/api/products", {
         method: isEdit ? "PUT" : "POST",
@@ -60,151 +85,257 @@ export default function ProductForm({ product, categories }) {
     }
   }
 
+  const categoryName = categories.find((c) => c.slug === form.category)?.name;
+  const margin =
+    Number(form.price) > 0 && form.cost !== ""
+      ? Math.round(((Number(form.price) - Number(form.cost)) / Number(form.price)) * 100)
+      : null;
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
-      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
-        <ImageUploader
-          label="Fotos del producto"
-          multiple
-          value={form.images}
-          onChange={(v) => set("images", v)}
-        />
-      </div>
-
-      <div className="grid gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">Nombre</label>
-          <input
-            required
-            value={form.name}
-            onChange={(e) => set("name", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">Categoría</label>
-          <select
-            required
-            value={form.category}
-            onChange={(e) => set("category", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          >
-            <option value="" disabled>
-              Selecciona una categoría
-            </option>
-            {categories.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">Stock</label>
-          <input
-            type="number"
-            min="0"
-            value={form.stock}
-            onChange={(e) => set("stock", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">Precio (COP)</label>
-          <input
-            required
-            type="number"
-            min="0"
-            value={form.price}
-            onChange={(e) => set("price", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">
-            Precio antes de descuento (opcional)
-          </label>
-          <input
-            type="number"
-            min="0"
-            value={form.compareAtPrice ?? ""}
-            onChange={(e) => set("compareAtPrice", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
-        </div>
-
-        <div className="sm:col-span-2 rounded-xl border border-dashed border-brand-orchid-400/50 bg-brand-blush-50/60 p-4">
-          <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-brand-deep-900">
-            🔒 Costo interno (COP)
-          </label>
-          <p className="mb-2 text-xs text-brand-deep-900/50">
-            Solo tú lo ves en el panel — nunca se muestra a tus clientes. Se usa para calcular tu
-            ganancia en el resumen.
+    <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-3">
+      {/* Main column */}
+      <div className="space-y-6 lg:col-span-2">
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="mb-1 text-sm font-bold text-brand-deep-900">📸 Fotos del producto</h2>
+          <p className="mb-3 text-xs text-brand-deep-900/50">
+            Sube de 2 a 5 fotos en buena calidad — ideal cuadradas, mínimo 800×800px, con luz
+            natural y fondo claro. La <strong>primera foto</strong> es la que se ve en la tienda y
+            en las redes; las demás aparecen como miniaturas en la página del producto.
           </p>
-          <input
-            type="number"
-            min="0"
-            value={form.cost}
-            onChange={(e) => set("cost", e.target.value)}
-            placeholder="0"
-            className="w-full max-w-xs rounded-xl border border-brand-pink-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
-          {Number(form.price) > 0 && form.cost !== "" && (
-            <p className="mt-2 text-xs font-medium text-brand-plum-700">
-              Ganancia estimada por unidad:{" "}
-              {money(Number(form.price) - Number(form.cost))} (
-              {Math.round(((Number(form.price) - Number(form.cost)) / Number(form.price)) * 100)}%
-              margen)
+          <ImageUploader multiple value={form.images} onChange={(v) => set("images", v)} />
+        </div>
+
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="text-sm font-bold text-brand-deep-900">🏷️ Título y descripción</h2>
+
+          <Field
+            label="Nombre del producto"
+            hint="Aparece como título en la tienda, en las tarjetas de producto y en Google. Sé claro y específico, ej. 'Labial Mate Rose'."
+          >
+            <input
+              required
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+
+          <Field
+            label="Descripción"
+            hint="Explica qué es, para qué sirve y qué lo hace especial. Aparece debajo del precio en la página del producto."
+          >
+            <textarea
+              rows={5}
+              value={form.description}
+              onChange={(e) => set("description", e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="text-sm font-bold text-brand-deep-900">💰 Precios</h2>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Precio (COP)" hint="Lo que paga tu clienta.">
+              <input
+                required
+                type="number"
+                min="0"
+                value={form.price}
+                onChange={(e) => set("price", e.target.value)}
+                className={inputClass}
+              />
+            </Field>
+
+            <Field
+              label="Precio antes de descuento"
+              hint="Opcional. Actívalo solo si está en oferta — se muestra tachado junto al precio."
+            >
+              <input
+                type="number"
+                min="0"
+                value={form.compareAtPrice ?? ""}
+                onChange={(e) => set("compareAtPrice", e.target.value)}
+                className={inputClass}
+              />
+            </Field>
+          </div>
+
+          <div className="rounded-xl border border-dashed border-brand-orchid-400/50 bg-brand-blush-50/60 p-4">
+            <p className="mb-1 flex items-center gap-1.5 text-sm font-medium text-brand-deep-900">
+              🔒 Costo interno (COP)
             </p>
-          )}
+            <p className="mb-2 text-xs text-brand-deep-900/50">
+              Solo tú lo ves en el panel — nunca se muestra a tus clientes. Se usa para calcular tu
+              ganancia en el resumen.
+            </p>
+            <input
+              type="number"
+              min="0"
+              value={form.cost}
+              onChange={(e) => set("cost", e.target.value)}
+              placeholder="0"
+              className={`${inputClass} max-w-xs bg-white`}
+            />
+            {margin !== null && (
+              <p className="mt-2 text-xs font-medium text-brand-plum-700">
+                Ganancia estimada por unidad: {money(Number(form.price) - Number(form.cost))} (
+                {margin}% margen)
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="sm:col-span-2">
-          <label className="mb-1 block text-sm font-medium text-brand-deep-900">Descripción</label>
-          <textarea
-            rows={4}
-            value={form.description}
-            onChange={(e) => set("description", e.target.value)}
-            className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
-          />
+        <ProductVariants
+          options={form.options}
+          variants={form.variants}
+          images={form.images}
+          basePrice={form.price}
+          onChange={({ options, variants }) => setForm((f) => ({ ...f, options, variants }))}
+        />
+
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <div>
+            <h2 className="text-sm font-bold text-brand-deep-900">🔍 Motor de búsqueda (SEO)</h2>
+            <p className="text-xs text-brand-deep-900/50">
+              Así se ve tu producto cuando alguien lo busca en Google. Déjalo vacío para usar el
+              nombre y la descripción automáticamente.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-brand-blush-100 bg-white p-3">
+            <p className="truncate text-sm text-[#1a0dab]">
+              {form.seoTitle || form.name || "Nombre del producto"} | Mariangel Cosmetic
+            </p>
+            <p className="text-xs text-green-700">mariangel-cosmetic.vercel.app › producto</p>
+            <p className="line-clamp-2 text-xs text-brand-deep-900/60">
+              {form.seoDescription || form.description || "La descripción aparecerá aquí."}
+            </p>
+          </div>
+
+          <Field label="Título SEO (opcional)">
+            <input
+              value={form.seoTitle}
+              onChange={(e) => set("seoTitle", e.target.value)}
+              placeholder={form.name}
+              maxLength={70}
+              className={inputClass}
+            />
+          </Field>
+
+          <Field label="Descripción SEO (opcional)" hint="Ideal entre 120 y 160 caracteres.">
+            <textarea
+              rows={2}
+              value={form.seoDescription}
+              onChange={(e) => set("seoDescription", e.target.value)}
+              placeholder={form.description}
+              maxLength={160}
+              className={inputClass}
+            />
+          </Field>
         </div>
-
-        <label className="flex items-center gap-2 text-sm font-medium text-brand-deep-900">
-          <input
-            type="checkbox"
-            checked={form.featured}
-            onChange={(e) => set("featured", e.target.checked)}
-            className="h-4 w-4 accent-brand-plum-600"
-          />
-          Producto destacado (aparece en el inicio)
-        </label>
-
-        <label className="flex items-center gap-2 text-sm font-medium text-brand-deep-900">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={(e) => set("active", e.target.checked)}
-            className="h-4 w-4 accent-brand-plum-600"
-          />
-          Visible en la tienda
-        </label>
       </div>
 
-      <ProductVariants
-        options={form.options}
-        variants={form.variants}
-        images={form.images}
-        basePrice={form.price}
-        onChange={({ options, variants }) => setForm((f) => ({ ...f, options, variants }))}
-      />
+      {/* Sidebar */}
+      <div className="space-y-6">
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="mb-3 text-sm font-bold text-brand-deep-900">✅ Estado</h2>
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-brand-deep-900">
+            <input
+              type="checkbox"
+              checked={form.active}
+              onChange={(e) => set("active", e.target.checked)}
+              className="h-4 w-4 accent-brand-plum-600"
+            />
+            Visible en la tienda
+          </label>
+          <p className="mb-3 text-xs text-brand-deep-900/50">
+            Si lo desactivas, el producto queda guardado pero oculto para tus clientas.
+          </p>
+          <label className="flex items-center gap-2 text-sm font-medium text-brand-deep-900">
+            <input
+              type="checkbox"
+              checked={form.featured}
+              onChange={(e) => set("featured", e.target.checked)}
+              className="h-4 w-4 accent-brand-plum-600"
+            />
+            Producto destacado
+          </label>
+          <p className="text-xs text-brand-deep-900/50">Aparece en la sección &ldquo;Lo más amado&rdquo; del inicio.</p>
+        </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="text-sm font-bold text-brand-deep-900">📦 Inventario</h2>
 
-      <div className="flex gap-3">
+          <Field
+            label="Stock"
+            hint="Cuando llega a 0, el producto se muestra como 'Agotado' en la tienda."
+          >
+            <input
+              type="number"
+              min="0"
+              value={form.stock}
+              onChange={(e) => set("stock", e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+
+          <Field label="SKU (opcional)" hint="Código interno de inventario — no se muestra a tus clientas.">
+            <input
+              value={form.sku}
+              onChange={(e) => set("sku", e.target.value)}
+              placeholder="Ej. LAB-ROSE-01"
+              className={inputClass}
+            />
+          </Field>
+        </div>
+
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+          <h2 className="text-sm font-bold text-brand-deep-900">🗂️ Organización</h2>
+
+          <Field label="Categoría">
+            <select
+              required
+              value={form.category}
+              onChange={(e) => set("category", e.target.value)}
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Selecciona una categoría
+              </option>
+              {categories.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {categoryName && (
+              <p className="mt-1 text-xs text-brand-deep-900/40">
+                Aparecerá en /tienda bajo &ldquo;{categoryName}&rdquo;.
+              </p>
+            )}
+          </Field>
+
+          <Field
+            label="Etiquetas (opcional)"
+            hint="Se muestran como insignias en la página del producto. Sepáralas con coma — ej. Nuevo, Bestseller, Vegano."
+          >
+            <input
+              value={form.tags}
+              onChange={(e) => set("tags", e.target.value)}
+              placeholder="Nuevo, Bestseller"
+              className={inputClass}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {error && (
+        <p className="lg:col-span-3 text-sm text-red-600">{error}</p>
+      )}
+
+      <div className="flex gap-3 lg:col-span-3">
         <button
           type="submit"
           disabled={saving}
