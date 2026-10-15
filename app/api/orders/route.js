@@ -40,6 +40,11 @@ export async function POST(request) {
           id: clamp(it.id, 50),
           name: clamp(it.name, MAX_STRING),
           price: Number(it.price) || 0,
+          // Mariangel's own pre-markup price, so profit/commission math can
+          // always split exactly what she earns from what Biomarketing
+          // earns — falls back to `price` only for the rare item that
+          // somehow arrives without it.
+          basePrice: it.basePrice != null ? Number(it.basePrice) || 0 : Number(it.price) || 0,
           qty: Math.max(1, Number(it.qty) || 1),
         })),
         total: Number(body.total) || 0,

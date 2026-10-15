@@ -5,6 +5,8 @@ import Footer from "@/components/footer";
 import CartDrawer from "@/components/cart-drawer";
 import WhatsAppFloatButton from "@/components/whatsapp-float-button";
 import PromoBanner from "@/components/sections/promo-banner";
+import VisitTracker from "@/components/visit-tracker";
+import MetaPixel from "@/components/meta-pixel";
 import { readStore } from "@/lib/store";
 
 export default async function StorefrontLayout({ children }) {
@@ -12,6 +14,8 @@ export default async function StorefrontLayout({ children }) {
 
   return (
     <>
+      <VisitTracker />
+      <MetaPixel pixelId={data.settings.metaPixelId} />
       <PromoBanner messages={data.sections.promo?.messages} />
       <Header logoUrl={data.settings.logo} categories={data.categories} />
       <main className="flex-1">{children}</main>

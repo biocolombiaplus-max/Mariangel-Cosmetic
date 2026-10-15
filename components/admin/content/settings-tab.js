@@ -64,6 +64,23 @@ export default function SettingsTab({ settings }) {
         </div>
       </div>
 
+      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+        <label className="mb-1 block text-sm font-medium text-brand-deep-900">
+          📣 Meta Pixel ID (Facebook / Instagram Ads)
+        </label>
+        <p className="mb-2 text-xs text-brand-deep-900/50">
+          Pégalo aquí para activar el seguimiento de tu campaña — no necesitas tocar código ni
+          volver a publicar la tienda. Lo encuentras en Meta Events Manager → tu píxel → ID del
+          píxel. Mientras esté vacío, no se carga nada de Meta en tu tienda.
+        </p>
+        <input
+          value={form.metaPixelId || ""}
+          onChange={set("metaPixelId")}
+          placeholder="Ej. 1234567890123456"
+          className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
+        />
+      </div>
+
       <SaveBar onSave={() => save({ settings: form })} saving={saving} saved={saved} error={error} />
     </div>
   );

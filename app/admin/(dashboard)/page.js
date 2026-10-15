@@ -2,6 +2,7 @@ import Link from "next/link";
 import { readStore, money } from "@/lib/store";
 import { computeStats } from "@/lib/analytics";
 import { computeCommission } from "@/lib/commission";
+import { readVisits, visitStats } from "@/lib/visits";
 import { STAGES } from "@/lib/crm";
 
 export default async function AdminHomePage() {
@@ -9,6 +10,8 @@ export default async function AdminHomePage() {
   const { products } = data;
   const stats = computeStats(data);
   const commission = computeCommission(data);
+  const visits = visitStats(await readVisits());
+  const maxDayVisits = Math.max(1, ...visits.last7Days.map((d) => d.count));
 
   const kpis = [
     { label: "Ingresos confirmados", value: money(stats.revenue), icon: "💰", highlight: true },
@@ -112,6 +115,41 @@ export default async function AdminHomePage() {
               ))}
             </ul>
           )}
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-brand-blush-100">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-bold text-brand-deep-900">👀 Tráfico de la tienda</h2>
+            <p className="text-xs text-brand-deep-900/50">
+              Visitantes únicos por sesión — útil para ver el impacto de tu campaña.
+            </p>
+          </div>
+          <div className="flex gap-6 text-right">
+            <div>
+              <p className="text-xl font-bold text-brand-deep-900">{visits.today}</p>
+              <p className="text-xs text-brand-deep-900/50">Hoy</p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-brand-deep-900">{visits.total7Days}</p>
+              <p className="text-xs text-brand-deep-900/50">Últimos 7 días</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex h-20 items-end gap-2">
+          {visits.last7Days.map((d) => (
+            <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+              <div
+                className="w-full rounded-t-md bg-brand-plum-600"
+                style={{ height: `${Math.max(6, (d.count / maxDayVisits) * 100)}%` }}
+                title={`${d.count} visitas`}
+              />
+              <span className="text-[10px] text-brand-deep-900/40">
+                {new Date(d.date).toLocaleDateString("es-CO", { weekday: "short" })}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 

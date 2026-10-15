@@ -5,6 +5,7 @@ import { money } from "@/lib/format";
 import { useCart } from "@/components/cart-context";
 import StarRating from "@/components/star-rating";
 import { priceRange } from "@/lib/variants";
+import { trackPixelEvent } from "@/lib/meta-pixel-events";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
@@ -74,7 +75,16 @@ export default function ProductCard({ product }) {
           </Link>
         ) : (
           <button
-            onClick={() => addItem(product, 1)}
+            onClick={() => {
+              addItem(product, 1);
+              trackPixelEvent("AddToCart", {
+                content_ids: [product.id],
+                content_name: product.name,
+                content_type: "product",
+                value: product.price,
+                currency: "COP",
+              });
+            }}
             disabled={product.stock <= 0}
             className="mt-2 w-full rounded-full bg-brand-plum-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-plum-700 disabled:cursor-not-allowed disabled:bg-brand-pink-200"
           >

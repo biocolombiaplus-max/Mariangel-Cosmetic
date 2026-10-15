@@ -13,8 +13,9 @@ Landing page + tienda online + panel administrativo para **Mariangel Cosmetic**,
   - **Formulario de producto estilo Shopify**, organizado por secciones (fotos, título/descripción, precios, variantes, SEO, estado, inventario, organización) con explicaciones de dónde aparece cada campo en la tienda — incluye **SKU**, **etiquetas** (se muestran como insignias en la ficha del producto) y **SEO** (título/descripción personalizados para Google, con vista previa en vivo).
   - **Variantes estilo Shopify** (color, tamaño, etc.): defines las opciones y sus valores, el sistema genera las combinaciones, y ajustas precio/stock/foto por variante. En la tienda, la clienta elige la variante y el precio, la foto y el stock se actualizan automáticamente.
   - Editor de contenido de la landing por secciones (portada/hero, promoción, "sobre nosotros", galería de Instagram, testimonios, pie de página) y datos generales (logo, nombre, WhatsApp, Instagram).
-  - **Dashboard de resumen** con ingresos confirmados, ganancia estimada, valor en negociación, tasa de cierre y pedidos recientes.
+  - **Dashboard de resumen** con ingresos confirmados, ganancia estimada, valor en negociación, tasa de cierre, tráfico de la tienda (visitas de hoy y de los últimos 7 días) y pedidos recientes.
   - **CRM de pedidos estilo Kommo** (`/admin/pedidos`): tablero Kanban por etapas (Nuevo, Contactado, En negociación, Ganado, Perdido) con tarjetas que se arrastran entre columnas, notas de seguimiento, etiquetas, y un botón directo para escribirle por WhatsApp a cada clienta (remarketing).
+  - **Comisión Biomarketing** (`/admin/comision`): cada producto se vende con un recargo porcentual configurable (5% por defecto) que se suma automáticamente al precio que define Mariangel — nunca se descuenta de su propia ganancia. El panel muestra la comisión acumulada, el avance del ciclo de pago actual (quincenal o mensual) con fecha de próximo pago, el historial de ciclos y el desglose "tu precio + comisión = precio final" en cada producto.
 - **Captura de leads en el checkout:** como no usamos la API oficial de WhatsApp Business (requiere aprobación de Meta), antes de abrir WhatsApp se le pide nombre y número a la clienta — así cada pedido por WhatsApp queda registrado en el CRM en vez de perderse en el chat.
 
 ## Cómo correrlo
@@ -91,5 +92,17 @@ Se incluye un logo por defecto recreado en SVG/CSS a partir de la identidad de m
 ## CRM y ganancia (costo interno)
 
 - Cada producto tiene un campo **"Costo interno (COP)"** en el formulario de admin, marcado con 🔒: solo se ve en el panel, nunca se expone en la tienda ni en las respuestas públicas de la API.
-- El dashboard (`/admin`) calcula la **ganancia estimada** restando ese costo al precio de venta de los pedidos marcados como "Ganado".
+- El dashboard (`/admin`) calcula la **ganancia estimada** restando ese costo al precio de venta de los pedidos marcados como "Ganado" — esta ganancia es siempre la de Mariangel, sin incluir la comisión de Biomarketing (ver abajo).
 - El **CRM de pedidos** (`/admin/pedidos`) captura automáticamente cada checkout por WhatsApp como una tarjeta en la etapa "Nuevo". Desde ahí puedes moverla de etapa, agregar notas de seguimiento, etiquetas (VIP, Recompra, etc.) y escribirle directo por WhatsApp para remarketing — todo sin depender de la API oficial de WhatsApp Business.
+
+## Precio final y comisión de Biomarketing
+
+- El precio que se define en cada producto es el **precio base de Mariangel**. La tienda muestra y cobra un **precio final** que es ese precio más un recargo porcentual (configurable en **Comisión Biomarketing → Comisión por producto**, 5% por defecto) — el recargo se suma, nunca se descuenta del precio base, así que la ganancia de Mariangel nunca se ve afectada.
+- El formulario de cada producto muestra el desglose completo: tu precio → + comisión Biomarketing → precio final en la tienda, y por separado tu ganancia real (precio base − costo interno).
+- El panel **Comisión Biomarketing** (`/admin/comision`) sigue esa comisión por ciclos de pago (quincenal o mensual), con fecha del próximo pago, historial de ciclos anteriores y el detalle de qué pedido aportó cuánto.
+
+## Tráfico de la tienda y Meta Pixel
+
+- El dashboard (`/admin`) muestra cuántas visitantes únicos (por sesión de navegador) entraron hoy y en los últimos 7 días — útil para ver el impacto de una campaña de anuncios en tiempo real, sin depender de otra herramienta.
+- Para medir y optimizar una campaña de Meta Ads (Facebook/Instagram) de verdad, conecta tu **Meta Pixel**: pega el ID de tu píxel en **Contenido de la tienda → General → Meta Pixel ID** y guarda — no requiere tocar código ni volver a publicar la tienda. Mientras el campo esté vacío, no se carga nada de Meta en la tienda.
+- Una vez activado, el píxel registra automáticamente `PageView`, y además `ViewContent` (al ver un producto), `AddToCart` (al agregar al carrito), `InitiateCheckout` (al abrir el checkout) y `Lead` (al enviar un pedido por WhatsApp) — nunca `Purchase`, ya que un pedido por WhatsApp es un lead calificado, no un pago confirmado.

@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { readStore } from "@/lib/store";
 import { publicProduct } from "@/lib/products";
+import { markupPct } from "@/lib/pricing";
 import Hero from "@/components/sections/hero";
 import TrustBar from "@/components/sections/trust-bar";
 import CategoryPills from "@/components/sections/category-pills";
@@ -14,10 +15,11 @@ import WhatsAppCTA from "@/components/sections/whatsapp-cta";
 
 export default async function HomePage() {
   const data = await readStore();
+  const pct = markupPct(data.settings);
   const featured = data.products
     .filter((p) => p.featured && p.active)
     .slice(0, 8)
-    .map(publicProduct);
+    .map((p) => publicProduct(p, pct));
 
   return (
     <>

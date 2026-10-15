@@ -8,9 +8,10 @@
     "logo": "",
     "currency": "COP",
     "freeShippingText": "Envíos a toda Colombia",
-    "commissionPerSale": 1000,
     "commissionCycle": "quincenal",
-    "commissionPayee": "Juan Carlos"
+    "commissionPayee": "Juan Carlos",
+    "biomarketingMarginPct": 5,
+    "metaPixelId": ""
   },
   "sections": {
     "hero": [
@@ -128,6 +129,12 @@
   ],
   "products": [
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p1",
       "slug": "labial-mate-rose",
       "name": "Labial Mate Rose",
@@ -145,6 +152,12 @@
       "cost": 15000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p2",
       "slug": "gloss-brillante-berry",
       "name": "Gloss Brillante Berry",
@@ -162,6 +175,12 @@
       "cost": 13000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p3",
       "slug": "labial-liquido-nude",
       "name": "Labial Líquido Nude",
@@ -179,6 +198,12 @@
       "cost": 14000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p4",
       "slug": "rubor-en-polvo-duo",
       "name": "Rubor en Polvo Duo",
@@ -196,6 +221,12 @@
       "cost": 17000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p5",
       "slug": "iluminador-glow",
       "name": "Iluminador Glow Skin",
@@ -213,6 +244,12 @@
       "cost": 18000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p6",
       "slug": "base-natural-cobertura",
       "name": "Base Natural Cobertura Media",
@@ -230,6 +267,12 @@
       "cost": 23000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p7",
       "slug": "corrector-hd",
       "name": "Corrector HD Full Coverage",
@@ -247,6 +290,12 @@
       "cost": 13500
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p8",
       "slug": "paleta-sombras-sunset",
       "name": "Paleta de Sombras Sunset",
@@ -264,6 +313,12 @@
       "cost": 25000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p9",
       "slug": "paleta-sombras-nude",
       "name": "Paleta de Sombras Nude",
@@ -281,6 +336,12 @@
       "cost": 24000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p10",
       "slug": "set-brochas-pro",
       "name": "Set de Brochas Pro x12",
@@ -298,6 +359,12 @@
       "cost": 30000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p11",
       "slug": "esponja-blending",
       "name": "Esponja Blending Duo",
@@ -315,6 +382,12 @@
       "cost": 9000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p12",
       "slug": "serum-hidratante",
       "name": "Sérum Hidratante Glow",
@@ -332,6 +405,12 @@
       "cost": 19000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p13",
       "slug": "crema-glow",
       "name": "Crema Facial Glow Boost",
@@ -349,6 +428,12 @@
       "cost": 21000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p14",
       "slug": "kit-mariangel-signature",
       "name": "Kit Mariangel Signature",
@@ -366,6 +451,12 @@
       "cost": 48000
     },
     {
+      "options": [],
+      "variants": [],
+      "tags": [],
+      "sku": "",
+      "seoTitle": "",
+      "seoDescription": "",
       "id": "p15",
       "slug": "gel-cejas",
       "name": "Gel Fijador de Cejas",

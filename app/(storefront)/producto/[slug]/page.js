@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import { readStore } from "@/lib/store";
 import { publicProduct } from "@/lib/products";
+import { markupPct } from "@/lib/pricing";
 import ProductDetail from "@/components/product-detail";
 import FeaturedProducts from "@/components/sections/featured-products";
 
@@ -31,15 +32,16 @@ export default async function ProductPage({ params }) {
 
   if (!product) notFound();
 
+  const pct = markupPct(data.settings);
   const related = data.products
     .filter((p) => p.category === product.category && p.id !== product.id && p.active)
     .slice(0, 4)
-    .map(publicProduct);
+    .map((p) => publicProduct(p, pct));
 
   return (
     <>
       <ProductDetail
-        product={publicProduct(product)}
+        product={publicProduct(product, pct)}
         whatsapp={data.settings.whatsapp}
         storeName={data.settings.storeName}
       />

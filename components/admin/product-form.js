@@ -6,6 +6,7 @@ import ImageUploader from "@/components/admin/image-uploader";
 import ProductVariants from "@/components/admin/product-variants";
 import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
+import { applyMarkup, DEFAULT_MARKUP_PCT } from "@/lib/pricing";
 
 const empty = {
   name: "",
@@ -39,7 +40,7 @@ function Field({ label, hint, children }) {
 const inputClass =
   "w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600";
 
-export default function ProductForm({ product, categories }) {
+export default function ProductForm({ product, categories, marginPct = DEFAULT_MARKUP_PCT }) {
   const router = useRouter();
   const isEdit = Boolean(product);
   const [form, setForm] = useState(
@@ -90,6 +91,8 @@ export default function ProductForm({ product, categories }) {
     Number(form.price) > 0 && form.cost !== ""
       ? Math.round(((Number(form.price) - Number(form.cost)) / Number(form.price)) * 100)
       : null;
+  const finalPrice = Number(form.price) > 0 ? applyMarkup(Number(form.price), marginPct) : 0;
+  const biomarketingCut = finalPrice - Number(form.price || 0);
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-3">
@@ -137,7 +140,10 @@ export default function ProductForm({ product, categories }) {
           <h2 className="text-sm font-bold text-brand-deep-900">💰 Precios</h2>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Precio (COP)" hint="Lo que paga tu clienta.">
+            <Field
+              label="Tu precio (COP)"
+              hint="El precio que tú defines para tu ganancia. En la tienda se muestra un poco más alto para cubrir la comisión de Biomarketing (ver abajo) — tú nunca pierdes margen por eso."
+            >
               <input
                 required
                 type="number"
@@ -162,13 +168,32 @@ export default function ProductForm({ product, categories }) {
             </Field>
           </div>
 
+          {finalPrice > 0 && (
+            <div className="rounded-xl bg-brand-blush-50/60 p-4 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-brand-deep-900/60">Tu precio</span>
+                <span className="font-medium text-brand-deep-900">{money(Number(form.price))}</span>
+              </div>
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-brand-deep-900/60">
+                  + Comisión Biomarketing ({marginPct}%)
+                </span>
+                <span className="font-medium text-brand-orchid-500">+{money(biomarketingCut)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between border-t border-brand-blush-100 pt-2">
+                <span className="font-semibold text-brand-deep-900">Precio final en la tienda</span>
+                <span className="text-base font-bold text-brand-plum-700">{money(finalPrice)}</span>
+              </div>
+            </div>
+          )}
+
           <div className="rounded-xl border border-dashed border-brand-orchid-400/50 bg-brand-blush-50/60 p-4">
             <p className="mb-1 flex items-center gap-1.5 text-sm font-medium text-brand-deep-900">
               🔒 Costo interno (COP)
             </p>
             <p className="mb-2 text-xs text-brand-deep-900/50">
               Solo tú lo ves en el panel — nunca se muestra a tus clientes. Se usa para calcular tu
-              ganancia en el resumen.
+              ganancia real, aparte de la comisión de Biomarketing.
             </p>
             <input
               type="number"
@@ -180,8 +205,8 @@ export default function ProductForm({ product, categories }) {
             />
             {margin !== null && (
               <p className="mt-2 text-xs font-medium text-brand-plum-700">
-                Ganancia estimada por unidad: {money(Number(form.price) - Number(form.cost))} (
-                {margin}% margen)
+                Tu ganancia por unidad: {money(Number(form.price) - Number(form.cost))} ({margin}%
+                margen) — esto es solo tuyo, no incluye la comisión de Biomarketing.
               </p>
             )}
           </div>

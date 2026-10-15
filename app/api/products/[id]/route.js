@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { publicProduct } from "@/lib/products";
+import { markupPct } from "@/lib/pricing";
 import { normalizeOptions } from "@/lib/variants";
 
 function sanitizeVariants(rawVariants) {
@@ -34,7 +35,7 @@ export async function GET(_request, { params }) {
   const product = data.products.find((p) => p.id === id || p.slug === id);
   if (!product) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
   const authed = await isAdminAuthenticated();
-  return NextResponse.json(authed ? product : publicProduct(product));
+  return NextResponse.json(authed ? product : publicProduct(product, markupPct(data.settings)));
 }
 
 export async function PUT(request, { params }) {

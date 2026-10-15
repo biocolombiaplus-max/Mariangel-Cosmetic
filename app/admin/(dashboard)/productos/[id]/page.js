@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { readStore } from "@/lib/store";
+import { markupPct } from "@/lib/pricing";
 import ProductForm from "@/components/admin/product-form";
 
 export default async function EditProductPage({ params }) {
@@ -12,7 +13,11 @@ export default async function EditProductPage({ params }) {
     <div>
       <h1 className="text-2xl font-bold text-brand-deep-900">Editar producto</h1>
       <p className="mt-1 mb-6 text-sm text-brand-deep-900/60">{product.name}</p>
-      <ProductForm product={product} categories={data.categories} />
+      <ProductForm
+        product={product}
+        categories={data.categories}
+        marginPct={markupPct(data.settings)}
+      />
     </div>
   );
 }

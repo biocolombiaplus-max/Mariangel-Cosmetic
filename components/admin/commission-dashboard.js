@@ -15,7 +15,7 @@ function formatDate(iso) {
 
 export default function CommissionDashboard({ commission, settings }) {
   const [form, setForm] = useState({
-    commissionPerSale: settings.commissionPerSale ?? 1000,
+    biomarketingMarginPct: settings.biomarketingMarginPct ?? 5,
     commissionPayee: settings.commissionPayee ?? "Juan Carlos",
     commissionCycle: settings.commissionCycle ?? "quincenal",
   });
@@ -27,8 +27,9 @@ export default function CommissionDashboard({ commission, settings }) {
     <div>
       <h1 className="text-2xl font-bold text-brand-deep-900">💼 Comisión Biomarketing</h1>
       <p className="mt-1 text-brand-deep-900/60">
-        Por cada venta confirmada, {c.payee} gana {money(c.perSale)}. Aquí está el avance del ciclo
-        de pago actual y el historial completo.
+        Por cada producto vendido, {c.payee} gana el {c.marginPct}% — ese porcentaje se suma al
+        precio de Mariangel para formar el precio final en la tienda, así que nunca sale de su
+        propia ganancia. Aquí está el avance del ciclo de pago actual y el historial completo.
       </p>
 
       {/* Hero total card */}
@@ -37,8 +38,8 @@ export default function CommissionDashboard({ commission, settings }) {
         <p className="text-sm font-medium text-white/80">Ganancia acumulada de {c.payee}</p>
         <p className="mt-2 text-5xl font-extrabold tracking-tight">{money(c.totalCommission)}</p>
         <p className="mt-2 text-sm text-white/80">
-          {c.totalSales} {c.totalSales === 1 ? "venta confirmada" : "ventas confirmadas"} ×{" "}
-          {money(c.perSale)} cada una
+          {c.totalSales} {c.totalSales === 1 ? "venta confirmada" : "ventas confirmadas"} · {c.marginPct}%
+          de cada una{c.totalSales > 0 && ` (promedio ${money(c.avgCommissionPerSale)} por venta)`}
         </p>
       </div>
 
@@ -53,8 +54,8 @@ export default function CommissionDashboard({ commission, settings }) {
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-brand-blush-100">
           <span className="text-2xl">💵</span>
-          <p className="mt-2 text-xl font-bold text-brand-deep-900">{money(c.perSale)}</p>
-          <p className="text-xs text-brand-deep-900/60">Por cada venta ganada</p>
+          <p className="mt-2 text-xl font-bold text-brand-deep-900">{c.marginPct}%</p>
+          <p className="text-xs text-brand-deep-900/60">De cada producto vendido</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-brand-blush-100 col-span-2 lg:col-span-1">
           <span className="text-2xl">💳</span>
@@ -143,14 +144,19 @@ export default function CommissionDashboard({ commission, settings }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-sm font-medium text-brand-deep-900">
-              Monto por venta (COP)
+              Comisión por producto (%)
             </label>
+            <p className="mb-1.5 text-xs text-brand-deep-900/50">
+              Se suma al precio que cada producto ya tiene — nunca se descuenta de la ganancia de
+              Mariangel.
+            </p>
             <input
               type="number"
               min="0"
-              value={form.commissionPerSale}
+              step="0.5"
+              value={form.biomarketingMarginPct}
               onChange={(e) =>
-                setForm((f) => ({ ...f, commissionPerSale: e.target.value }))
+                setForm((f) => ({ ...f, biomarketingMarginPct: e.target.value }))
               }
               className="w-full rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
             />
@@ -192,7 +198,7 @@ export default function CommissionDashboard({ commission, settings }) {
           onSave={() =>
             save({
               settings: {
-                commissionPerSale: Number(form.commissionPerSale) || 0,
+                biomarketingMarginPct: Number(form.biomarketingMarginPct) || 0,
                 commissionPayee: form.commissionPayee.trim() || "Juan Carlos",
                 commissionCycle: form.commissionCycle,
               },

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { waLink, buildOrderMessage } from "@/lib/whatsapp";
 import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
+import { trackPixelEvent } from "@/lib/meta-pixel-events";
 
 // Captures name + WhatsApp before handing off to wa.me. We have no
 // WhatsApp Business API access, so this is how every WhatsApp checkout
@@ -23,6 +24,18 @@ export default function CheckoutModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!open) return;
+    trackPixelEvent("InitiateCheckout", {
+      content_ids: items.map((it) => it.id),
+      num_items: items.reduce((sum, it) => sum + it.qty, 0),
+      value: total,
+      currency: "COP",
+    });
+    // Only when the modal opens, not on every re-render while it's open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   if (!open) return null;
 
   async function handleSubmit(e) {
@@ -36,6 +49,15 @@ export default function CheckoutModal({
         body: JSON.stringify({ customerName: name, customerPhone: phone, items, total }),
       });
       await parseJsonResponse(res);
+      // The closest honest signal we have: a WhatsApp order is a
+      // qualified lead, not a confirmed payment, so this fires "Lead" —
+      // never "Purchase" — which only a real confirmed sale should ever
+      // trigger (there is no such moment client-side in this flow).
+      trackPixelEvent("Lead", {
+        content_ids: items.map((it) => it.id),
+        value: total,
+        currency: "COP",
+      });
       const message = buildOrderMessage(storeName, name.trim(), items, total);
       window.open(waLink(whatsapp, message), "_blank", "noopener,noreferrer");
       onSuccess?.();

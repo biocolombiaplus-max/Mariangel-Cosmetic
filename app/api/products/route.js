@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readStore, updateStore, slugify } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { publicProduct } from "@/lib/products";
+import { markupPct } from "@/lib/pricing";
 import { normalizeOptions } from "@/lib/variants";
 
 function sanitizeVariants(rawVariants) {
@@ -31,7 +32,9 @@ function sanitizeTags(rawTags) {
 export async function GET() {
   const data = await readStore();
   const authed = await isAdminAuthenticated();
-  const products = authed ? data.products : data.products.map(publicProduct);
+  const products = authed
+    ? data.products
+    : data.products.map((p) => publicProduct(p, markupPct(data.settings)));
   return NextResponse.json(products);
 }
 

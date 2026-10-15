@@ -1,16 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { money } from "@/lib/format";
 import { useCart } from "@/components/cart-context";
 import CheckoutModal from "@/components/checkout-modal";
 import StarRating from "@/components/star-rating";
 import { findVariant, variantLabel } from "@/lib/variants";
 import { swatchColorFor } from "@/lib/colors";
+import { trackPixelEvent } from "@/lib/meta-pixel-events";
 
 export default function ProductDetail({ product, whatsapp, storeName }) {
   const { addItem } = useCart();
   const hasVariants = product.options?.length > 0;
+
+  useEffect(() => {
+    trackPixelEvent("ViewContent", {
+      content_ids: [product.id],
+      content_name: product.name,
+      content_type: "product",
+      value: product.price,
+      currency: "COP",
+    });
+    // Only once per page load — not on every variant selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
 
   const [selected, setSelected] = useState(() =>
     hasVariants && product.variants?.[0] ? { ...product.variants[0].values } : {}
@@ -22,6 +35,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
 
   const selectedVariant = hasVariants ? findVariant(product.variants, selected) : null;
   const effectivePrice = selectedVariant?.price ?? product.price;
+  const effectiveBasePrice = selectedVariant?.basePrice ?? product.basePrice ?? product.price;
   const effectiveStock = selectedVariant ? selectedVariant.stock : product.stock;
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > effectivePrice;
   const canOrder = (!hasVariants || Boolean(selectedVariant)) && effectiveStock > 0;
@@ -48,6 +62,7 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
     slug: product.slug,
     name: `${product.name}${variantSuffix}`,
     price: effectivePrice,
+    basePrice: effectiveBasePrice,
     images: [selectedVariant?.image || product.images[activeImg]],
   };
   const buyNowTotal = effectivePrice * qty;
@@ -246,6 +261,13 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
             <button
               onClick={() => {
                 addItem(cartProduct, qty);
+                trackPixelEvent("AddToCart", {
+                  content_ids: [product.id],
+                  content_name: cartProduct.name,
+                  content_type: "product",
+                  value: effectivePrice * qty,
+                  currency: "COP",
+                });
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);
               }}
@@ -277,7 +299,15 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
         onClose={() => setCheckoutOpen(false)}
         whatsapp={whatsapp}
         storeName={storeName}
-        items={[{ id: cartProduct.id, name: cartProduct.name, price: effectivePrice, qty }]}
+        items={[
+          {
+            id: cartProduct.id,
+            name: cartProduct.name,
+            price: effectivePrice,
+            basePrice: effectiveBasePrice,
+            qty,
+          },
+        ]}
         total={buyNowTotal}
       />
     </div>
