@@ -85,6 +85,15 @@ Una vez configurado, Cloudinary toma prioridad automáticamente sobre Vercel Blo
 
 El número de WhatsApp (`3005089954`) se gestiona desde **Contenido de la tienda → General** en el panel administrativo, en formato internacional sin espacios ni `+` (ej. `573005089954`).
 
+## Catálogo para Meta Ads (miniaturas de productos en los anuncios)
+
+La tienda publica su catálogo completo en `/api/feed` (CSV público, sin login) con el formato que exige **Meta Commerce Manager**: id, título, descripción, disponibilidad, precio final (con el recargo de Biomarketing ya incluido), link al producto y foto. Para que aparezcan las miniaturas del catálogo debajo de tus anuncios (como en las tiendas grandes):
+
+1. En [Meta Commerce Manager](https://business.facebook.com/commerce/), crea un catálogo (o usa uno existente) y conéctalo a tu Business Manager.
+2. En **Agregar artículos → Usar fuente de datos → Programar una fuente de datos**, pega la URL `https://tu-dominio.vercel.app/api/feed` y programa que se actualice todos los días.
+3. Conecta ese catálogo a tu píxel (en Events Manager → tu conjunto de datos → Catálogos).
+4. Al crear el anuncio, usa el objetivo/formato **"Ventas del catálogo"** o un anuncio de **"Colección"** — ahí es donde Meta muestra las miniaturas de productos debajo del anuncio principal. Un anuncio de imagen/video normal (como el que ya tienes) no las muestra por sí solo, aunque el catálogo esté conectado.
+
 ## Domicilio gratis (umbral configurable)
 
 En **Contenido de la tienda → General → "Domicilio gratis desde"** defines el monto a partir del cual el domicilio es gratis (ej. `120000`). El carrito y el checkout muestran automáticamente una barra de progreso con "te faltan $X" o un aviso de "¡domicilio gratis!" una vez alcanzado — nunca bloquea ni interrumpe la compra. Déjalo en `0` para desactivarlo.
