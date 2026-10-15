@@ -11,7 +11,8 @@
     "commissionCycle": "quincenal",
     "commissionPayee": "Juan Carlos",
     "biomarketingMarginPct": 5,
-    "metaPixelId": ""
+    "metaPixelId": "",
+    "freeShippingThreshold": 120000
   },
   "sections": {
     "hero": [

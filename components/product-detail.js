@@ -9,7 +9,7 @@ import { findVariant, variantLabel } from "@/lib/variants";
 import { swatchColorFor } from "@/lib/colors";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
 
-export default function ProductDetail({ product, whatsapp, storeName }) {
+export default function ProductDetail({ product, whatsapp, storeName, freeShippingThreshold }) {
   const { addItem } = useCart();
   const hasVariants = product.options?.length > 0;
 
@@ -305,10 +305,12 @@ export default function ProductDetail({ product, whatsapp, storeName }) {
             name: cartProduct.name,
             price: effectivePrice,
             basePrice: effectiveBasePrice,
+            image: cartProduct.images[0],
             qty,
           },
         ]}
         total={buyNowTotal}
+        freeShippingThreshold={freeShippingThreshold}
       />
     </div>
   );

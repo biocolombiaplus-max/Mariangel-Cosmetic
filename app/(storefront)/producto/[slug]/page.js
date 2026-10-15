@@ -44,6 +44,7 @@ export default async function ProductPage({ params }) {
         product={publicProduct(product, pct)}
         whatsapp={data.settings.whatsapp}
         storeName={data.settings.storeName}
+        freeShippingThreshold={data.settings.freeShippingThreshold}
       />
       {related.length > 0 && (
         <FeaturedProducts products={related} eyebrow="También te puede gustar" title="Productos relacionados" />

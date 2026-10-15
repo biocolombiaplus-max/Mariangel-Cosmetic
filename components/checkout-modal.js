@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { waLink, buildOrderMessage } from "@/lib/whatsapp";
 import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
+import FreeShippingNudge from "@/components/free-shipping-nudge";
 
 // Captures name + WhatsApp before handing off to wa.me. We have no
 // WhatsApp Business API access, so this is how every WhatsApp checkout
@@ -17,22 +18,44 @@ export default function CheckoutModal({
   storeName,
   items,
   total,
+  freeShippingThreshold,
   onSuccess,
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const wasOpenRef = useRef(false);
 
   useEffect(() => {
-    if (!open) return;
-    trackPixelEvent("InitiateCheckout", {
-      content_ids: items.map((it) => it.id),
-      num_items: items.reduce((sum, it) => sum + it.qty, 0),
-      value: total,
-      currency: "COP",
-    });
-    // Only when the modal opens, not on every re-render while it's open.
+    if (open) {
+      trackPixelEvent("InitiateCheckout", {
+        content_ids: items.map((it) => it.id),
+        num_items: items.reduce((sum, it) => sum + it.qty, 0),
+        value: total,
+        currency: "COP",
+      });
+    } else if (wasOpenRef.current && name.trim() && phone.trim()) {
+      // Closed without finishing, but we already have a name + WhatsApp —
+      // that's enough to follow up, so it lands in the CRM as an
+      // abandoned-cart lead instead of being lost. A successful submit
+      // already clears name/phone before closing, so this never double
+      // fires for a completed order.
+      fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: name,
+          customerPhone: phone,
+          items,
+          total,
+          status: "abandonado",
+        }),
+      }).catch(() => {});
+    }
+    wasOpenRef.current = open;
+    // Only react to `open` transitions, reading whatever name/phone
+    // currently hold at that moment.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -94,6 +117,9 @@ export default function CheckoutModal({
           Cuéntanos tus datos para darte una atención más rápida y te llevamos a WhatsApp con tu
           pedido listo (Total: <strong>{money(total)}</strong>).
         </p>
+        <div className="mb-4">
+          <FreeShippingNudge subtotal={total} threshold={freeShippingThreshold} />
+        </div>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             required

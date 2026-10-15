@@ -117,13 +117,23 @@ export default function CrmDetailPanel({ order, storeName, onClose, onUpdate, on
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-brand-deep-900/50">
               Pedido
             </h3>
-            <ul className="space-y-1 rounded-xl bg-brand-blush-50 p-3 text-sm">
+            <ul className="space-y-2 rounded-xl bg-brand-blush-50 p-3 text-sm">
               {order.items.map((it, i) => (
-                <li key={it.id + i} className="flex justify-between text-brand-deep-900/80">
-                  <span>
-                    {it.name} x{it.qty}
-                  </span>
-                  <span>{money(it.price * it.qty)}</span>
+                <li key={it.id + i} className="flex items-center justify-between gap-2 text-brand-deep-900/80">
+                  <div className="flex min-w-0 items-center gap-2">
+                    {it.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={it.image}
+                        alt=""
+                        className="h-9 w-9 shrink-0 rounded-lg object-cover"
+                      />
+                    )}
+                    <span className="truncate">
+                      {it.name} x{it.qty}
+                    </span>
+                  </div>
+                  <span className="shrink-0">{money(it.price * it.qty)}</span>
                 </li>
               ))}
             </ul>

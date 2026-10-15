@@ -7,14 +7,14 @@ Landing page + tienda online + panel administrativo para **Mariangel Cosmetic**,
 - **Landing page** con hero rotativo, barra de confianza (envío, asesoría, compra segura, clientas felices), categorías, productos destacados, banner de promoción, sección "Cómo comprar" en 3 pasos, "sobre nosotros", galería estilo Instagram, testimonios con calificación promedio y CTA de WhatsApp.
 - **Tienda (`/tienda`)** con filtro por categoría, buscador y orden por precio/destacados.
 - **Ficha de producto (`/producto/[slug]`)** con galería, selector de cantidad, "agregar al carrito" y "comprar ya por WhatsApp".
-- **Carrito** persistente (localStorage) con checkout que arma automáticamente el mensaje de WhatsApp con el resumen del pedido.
+- **Carrito** persistente (localStorage) con checkout que arma automáticamente el mensaje de WhatsApp con el resumen del pedido, un link a la foto de cada producto (WhatsApp no permite adjuntar imágenes reales en un link pre-llenado, así que se incluye el link directo a la foto para verla en un toque) y un aviso de "te faltan $X para domicilio gratis" que nunca interrumpe la compra.
 - **Panel administrativo (`/admin`)**, protegido con contraseña, estilo Shopify:
   - CRUD de productos con subida de fotos, con un campo de **costo interno** (oculto para tus clientes) para calcular tu ganancia real.
   - **Formulario de producto estilo Shopify**, organizado por secciones (fotos, título/descripción, precios, variantes, SEO, estado, inventario, organización) con explicaciones de dónde aparece cada campo en la tienda — incluye **SKU**, **etiquetas** (se muestran como insignias en la ficha del producto) y **SEO** (título/descripción personalizados para Google, con vista previa en vivo).
   - **Variantes estilo Shopify** (color, tamaño, etc.): defines las opciones y sus valores, el sistema genera las combinaciones, y ajustas precio/stock/foto por variante. En la tienda, la clienta elige la variante y el precio, la foto y el stock se actualizan automáticamente.
   - Editor de contenido de la landing por secciones (portada/hero, promoción, "sobre nosotros", galería de Instagram, testimonios, pie de página) y datos generales (logo, nombre, WhatsApp, Instagram).
   - **Dashboard de resumen** con ingresos confirmados, ganancia estimada, valor en negociación, tasa de cierre, tráfico de la tienda (visitas de hoy y de los últimos 7 días) y pedidos recientes.
-  - **CRM de pedidos estilo Kommo** (`/admin/pedidos`): tablero Kanban por etapas (Nuevo, Contactado, En negociación, Ganado, Perdido) con tarjetas que se arrastran entre columnas, notas de seguimiento, etiquetas, y un botón directo para escribirle por WhatsApp a cada clienta (remarketing).
+  - **CRM de pedidos estilo Kommo** (`/admin/pedidos`): tablero Kanban por etapas (Nuevo, **Carrito abandonado**, Contactado, En negociación, Ganado, Perdido) con tarjetas que se arrastran entre columnas, notas de seguimiento, etiquetas, y un botón directo para escribirle por WhatsApp a cada clienta (remarketing). Si alguien deja su nombre y WhatsApp en el checkout pero no termina el pedido, queda capturado en "Carrito abandonado" para que puedas recuperarlo — no se pierde. Una venta solo cuenta como ganancia confirmada (y suma a la comisión de Biomarketing) cuando tú mueves la tarjeta a **"Ganado"**, sin importar de qué etapa venga — así un pedido que llegó a WhatsApp pero no se cerró nunca infla tus números.
   - **Comisión Biomarketing** (`/admin/comision`): cada producto se vende con un recargo porcentual configurable (5% por defecto) que se suma automáticamente al precio que define Mariangel — nunca se descuenta de su propia ganancia. El panel muestra la comisión acumulada, el avance del ciclo de pago actual (quincenal o mensual) con fecha de próximo pago, el historial de ciclos y el desglose "tu precio + comisión = precio final" en cada producto.
 - **Captura de leads en el checkout:** como no usamos la API oficial de WhatsApp Business (requiere aprobación de Meta), antes de abrir WhatsApp se le pide nombre y número a la clienta — así cada pedido por WhatsApp queda registrado en el CRM en vez de perderse en el chat.
 
@@ -84,6 +84,10 @@ Una vez configurado, Cloudinary toma prioridad automáticamente sobre Vercel Blo
 ## WhatsApp Business
 
 El número de WhatsApp (`3005089954`) se gestiona desde **Contenido de la tienda → General** en el panel administrativo, en formato internacional sin espacios ni `+` (ej. `573005089954`).
+
+## Domicilio gratis (umbral configurable)
+
+En **Contenido de la tienda → General → "Domicilio gratis desde"** defines el monto a partir del cual el domicilio es gratis (ej. `120000`). El carrito y el checkout muestran automáticamente una barra de progreso con "te faltan $X" o un aviso de "¡domicilio gratis!" una vez alcanzado — nunca bloquea ni interrumpe la compra. Déjalo en `0` para desactivarlo.
 
 ## Logo
 

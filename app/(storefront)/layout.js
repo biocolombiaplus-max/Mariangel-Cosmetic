@@ -20,7 +20,11 @@ export default async function StorefrontLayout({ children }) {
       <Header logoUrl={data.settings.logo} categories={data.categories} />
       <main className="flex-1">{children}</main>
       <Footer settings={data.settings} footer={data.sections.footer} categories={data.categories} />
-      <CartDrawer whatsapp={data.settings.whatsapp} storeName={data.settings.storeName} />
+      <CartDrawer
+        whatsapp={data.settings.whatsapp}
+        storeName={data.settings.storeName}
+        freeShippingThreshold={data.settings.freeShippingThreshold}
+      />
       <WhatsAppFloatButton whatsapp={data.settings.whatsapp} storeName={data.settings.storeName} />
     </>
   );

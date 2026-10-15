@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useCart } from "@/components/cart-context";
 import { money } from "@/lib/format";
 import CheckoutModal from "@/components/checkout-modal";
+import FreeShippingNudge from "@/components/free-shipping-nudge";
 
-export default function CartDrawer({ whatsapp, storeName }) {
+export default function CartDrawer({ whatsapp, storeName, freeShippingThreshold }) {
   const { items, isOpen, close, removeItem, updateQty, total, clear } = useCart();
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
@@ -94,6 +95,9 @@ export default function CartDrawer({ whatsapp, storeName }) {
 
         {items.length > 0 && (
           <div className="border-t border-brand-blush-100 px-5 py-4">
+            <div className="mb-3">
+              <FreeShippingNudge subtotal={total} threshold={freeShippingThreshold} />
+            </div>
             <div className="mb-3 flex items-center justify-between text-sm">
               <span className="text-brand-plum-700/70">Subtotal</span>
               <span className="text-lg font-bold text-brand-deep-900">{money(total)}</span>
@@ -121,6 +125,7 @@ export default function CartDrawer({ whatsapp, storeName }) {
         storeName={storeName}
         items={items}
         total={total}
+        freeShippingThreshold={freeShippingThreshold}
         onSuccess={() => {
           clear();
           close();

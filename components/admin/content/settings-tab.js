@@ -66,6 +66,24 @@ export default function SettingsTab({ settings }) {
 
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
         <label className="mb-1 block text-sm font-medium text-brand-deep-900">
+          🚚 Domicilio gratis desde (COP)
+        </label>
+        <p className="mb-2 text-xs text-brand-deep-900/50">
+          En el carrito y antes de enviar el pedido por WhatsApp, tus clientas ven cuánto les falta
+          para el domicilio gratis — sin interrumpir la compra. Déjalo en 0 para desactivarlo.
+        </p>
+        <input
+          type="number"
+          min="0"
+          value={form.freeShippingThreshold ?? ""}
+          onChange={set("freeShippingThreshold")}
+          placeholder="120000"
+          className="w-full max-w-xs rounded-xl border border-brand-pink-200 px-4 py-2.5 text-sm outline-none focus:border-brand-plum-600"
+        />
+      </div>
+
+      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-blush-100">
+        <label className="mb-1 block text-sm font-medium text-brand-deep-900">
           📣 Meta Pixel ID (Facebook / Instagram Ads)
         </label>
         <p className="mb-2 text-xs text-brand-deep-900/50">
@@ -81,7 +99,16 @@ export default function SettingsTab({ settings }) {
         />
       </div>
 
-      <SaveBar onSave={() => save({ settings: form })} saving={saving} saved={saved} error={error} />
+      <SaveBar
+        onSave={() =>
+          save({
+            settings: { ...form, freeShippingThreshold: Number(form.freeShippingThreshold) || 0 },
+          })
+        }
+        saving={saving}
+        saved={saved}
+        error={error}
+      />
     </div>
   );
 }

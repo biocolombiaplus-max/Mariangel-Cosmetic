@@ -45,13 +45,19 @@ export async function POST(request) {
           // earns — falls back to `price` only for the rare item that
           // somehow arrives without it.
           basePrice: it.basePrice != null ? Number(it.basePrice) || 0 : Number(it.price) || 0,
+          image: clamp(it.image, 500),
           qty: Math.max(1, Number(it.qty) || 1),
         })),
         total: Number(body.total) || 0,
-        status: "nuevo",
+        // Public endpoint — only "abandonado" is accepted as a caller-set
+        // override (the checkout modal uses it when someone leaves contact
+        // info but never finishes). Every other stage (contactado, ganado,
+        // perdido, ...) is only ever reached by an authenticated admin PUT,
+        // so a stray request here can't fake a closed sale.
+        status: body.status === "abandonado" ? "abandonado" : "nuevo",
         tags: [],
         notes: [],
-        source: "whatsapp",
+        source: body.status === "abandonado" ? "carrito_abandonado" : "whatsapp",
       };
       data.orders.unshift(newOrder);
       return newOrder;
