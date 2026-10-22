@@ -10,7 +10,11 @@ export default async function AdminContentPage() {
       <p className="mt-1 mb-6 text-sm text-brand-deep-900/60">
         Edita las imágenes y textos de cada sección de tu landing page.
       </p>
-      <ContentEditor settings={data.settings} sections={data.sections} />
+      <ContentEditor
+        settings={data.settings}
+        sections={data.sections}
+        products={(data.products || []).filter((p) => p.active)}
+      />
     </div>
   );
 }

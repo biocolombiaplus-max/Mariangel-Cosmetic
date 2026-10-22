@@ -6,6 +6,8 @@ import HeroTab from "@/components/admin/content/hero-tab";
 import PromoAboutTab from "@/components/admin/content/promo-about-tab";
 import InstagramTab from "@/components/admin/content/instagram-tab";
 import TestimonialsTab from "@/components/admin/content/testimonials-tab";
+import WhatsappReviewsTab from "@/components/admin/content/whatsapp-reviews-tab";
+import TipsTab from "@/components/admin/content/tips-tab";
 import FooterTab from "@/components/admin/content/footer-tab";
 
 const TABS = [
@@ -14,10 +16,12 @@ const TABS = [
   { key: "promo", label: "Promo / Nosotros", icon: "💬" },
   { key: "instagram", label: "Instagram", icon: "📸" },
   { key: "testimonials", label: "Testimonios", icon: "⭐" },
+  { key: "whatsappReviews", label: "Capturas de WhatsApp", icon: "📲" },
+  { key: "tips", label: "Tips de maquillaje", icon: "💡" },
   { key: "footer", label: "Pie de página", icon: "📍" },
 ];
 
-export default function ContentEditor({ settings, sections }) {
+export default function ContentEditor({ settings, sections, products = [] }) {
   const [tab, setTab] = useState("settings");
 
   return (
@@ -43,6 +47,10 @@ export default function ContentEditor({ settings, sections }) {
       {tab === "promo" && <PromoAboutTab promo={sections.promo} about={sections.about} />}
       {tab === "instagram" && <InstagramTab instagram={sections.instagram} />}
       {tab === "testimonials" && <TestimonialsTab testimonials={sections.testimonials} />}
+      {tab === "whatsappReviews" && (
+        <WhatsappReviewsTab whatsappReviews={sections.whatsappReviews} />
+      )}
+      {tab === "tips" && <TipsTab tips={sections.tips} products={products} />}
       {tab === "footer" && <FooterTab footer={sections.footer} />}
     </div>
   );

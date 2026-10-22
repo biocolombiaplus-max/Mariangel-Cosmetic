@@ -96,6 +96,14 @@
       "schedule": "Lunes a sábado · 8:00am - 7:00pm",
       "city": "Colombia 🇨🇴",
       "email": "hola@mariangelcosmetic.com"
+    },
+    "whatsappReviews": {
+      "title": "Lo que nos escriben por WhatsApp",
+      "items": []
+    },
+    "tips": {
+      "title": "Tips de maquillaje",
+      "items": []
     }
   },
   "categories": [

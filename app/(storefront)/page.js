@@ -10,7 +10,9 @@ import FeaturedProducts from "@/components/sections/featured-products";
 import HowToBuy from "@/components/sections/how-to-buy";
 import About from "@/components/sections/about";
 import InstagramGallery from "@/components/sections/instagram-gallery";
+import MakeupTips from "@/components/sections/makeup-tips";
 import Testimonials from "@/components/sections/testimonials";
+import WhatsappReviews from "@/components/sections/whatsapp-reviews";
 import WhatsAppCTA from "@/components/sections/whatsapp-cta";
 
 export default async function HomePage() {
@@ -21,6 +23,11 @@ export default async function HomePage() {
     .slice(0, 8)
     .map((p) => publicProduct(p, pct));
 
+  const tipItems = data.sections.tips.items.map((tip) => {
+    const product = data.products.find((p) => p.id === tip.productId && p.active);
+    return { ...tip, product: product ? { slug: product.slug, name: product.name } : null };
+  });
+
   return (
     <>
       <FeaturedProducts products={featured} />
@@ -29,11 +36,16 @@ export default async function HomePage() {
       <CategoryPills categories={data.categories} />
       <HowToBuy />
       <About about={data.sections.about} />
+      <MakeupTips title={data.sections.tips.title} items={tipItems} />
       <InstagramGallery
         instagram={data.sections.instagram}
         instagramUrl={data.settings.instagramUrl}
       />
       <Testimonials testimonials={data.sections.testimonials} />
+      <WhatsappReviews
+        title={data.sections.whatsappReviews.title}
+        items={data.sections.whatsappReviews.items}
+      />
       <WhatsAppCTA whatsapp={data.settings.whatsapp} storeName={data.settings.storeName} />
     </>
   );
