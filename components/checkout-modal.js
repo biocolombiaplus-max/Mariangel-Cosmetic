@@ -6,6 +6,7 @@ import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
 import { trackFunnelEvent } from "@/lib/track-event";
+import { baseProductId } from "@/lib/variants";
 import FreeShippingNudge from "@/components/free-shipping-nudge";
 
 // Captures name + WhatsApp before handing off to wa.me. We have no
@@ -31,7 +32,7 @@ export default function CheckoutModal({
   useEffect(() => {
     if (open) {
       trackPixelEvent("InitiateCheckout", {
-        content_ids: items.map((it) => it.id),
+        content_ids: items.map((it) => baseProductId(it.id)),
         num_items: items.reduce((sum, it) => sum + it.qty, 0),
         value: total,
         currency: "COP",
@@ -79,7 +80,7 @@ export default function CheckoutModal({
       // never "Purchase" — which only a real confirmed sale should ever
       // trigger (there is no such moment client-side in this flow).
       trackPixelEvent("Lead", {
-        content_ids: items.map((it) => it.id),
+        content_ids: items.map((it) => baseProductId(it.id)),
         value: total,
         currency: "COP",
       });
