@@ -23,8 +23,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero slides={data.sections.hero} />
       <FeaturedProducts products={featured} />
+      <Hero slides={data.sections.hero} />
       <TrustBar />
       <CategoryPills categories={data.categories} />
       <HowToBuy />
