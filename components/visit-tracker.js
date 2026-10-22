@@ -1,8 +1,24 @@
 "use client";
 
 import { useEffect } from "react";
+import { trackFunnelEvent } from "@/lib/track-event";
 
 const SESSION_FLAG = "mariangel_visit_tracked";
+
+// First-touch attribution: whatever brought this browser session to the
+// site (an ad's utm_source/utm_campaign, or nothing for direct/organic
+// traffic) — captured once per session, shown in /admin/analiticas.
+function captureSource() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get("utm_source");
+    if (!source) return "Directo / Orgánico";
+    const campaign = params.get("utm_campaign");
+    return campaign ? `${source} · ${campaign}` : source;
+  } catch {
+    return "Directo / Orgánico";
+  }
+}
 
 // Counts unique browser sessions, not raw page loads — pings once per tab
 // session instead of on every navigation, which is both gentler on the
@@ -15,7 +31,7 @@ export default function VisitTracker() {
     } catch {
       // storage unavailable (private mode, etc.) — just track this load
     }
-    fetch("/api/track-visit", { method: "POST" }).catch(() => {});
+    trackFunnelEvent("pageview", { source: captureSource() });
   }, []);
 
   return null;

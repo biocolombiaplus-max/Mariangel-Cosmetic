@@ -85,6 +85,20 @@ Una vez configurado, Cloudinary toma prioridad automáticamente sobre Vercel Blo
 
 El número de WhatsApp (`3005089954`) se gestiona desde **Contenido de la tienda → General** en el panel administrativo, en formato internacional sin espacios ni `+` (ej. `573005089954`).
 
+## Analíticas de campaña (embudo estilo Shopify)
+
+El panel (`/admin/analiticas`) muestra el embudo completo de tu tienda, con conteo y % de conversión en cada paso: visitas → vieron un producto → agregaron al carrito → iniciaron el pedido → dejaron sus datos → compra confirmada. También muestra visitas por día y de dónde viene el tráfico (según el `utm_source`/`utm_campaign` del link que usó cada visitante). Para que el origen se vea en la tabla de "¿De dónde viene el tráfico?", usa un link con parámetros UTM en tus anuncios — ver la siguiente sección.
+
+Estos datos son propios de tu tienda (no dependen de que el píxel de Meta esté bien configurado) y se guardan en un almacenamiento liviano e independiente del catálogo, así que nunca afectan la velocidad de guardar productos o pedidos.
+
+**Qué URL poner en el anuncio:** en "Sitio web" pon la página a la que quieres llevar a la clienta (ej. `https://tu-dominio.vercel.app/` para la tienda completa, o `https://tu-dominio.vercel.app/producto/labial-mate-rose` si el anuncio es de ese producto específico). Luego, en el campo **"Parámetros de URL"** del anuncio (no en la URL principal), agrega:
+
+```
+utm_source=facebook&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{ad.name}}
+```
+
+Meta rellena automáticamente el nombre real de la campaña y del anuncio en cada clic — así cada visita queda identificada en `/admin/analiticas` con la campaña y el anuncio exactos de donde vino.
+
 ## Catálogo para Meta Ads (miniaturas de productos en los anuncios)
 
 La tienda publica su catálogo completo en `/api/feed` (CSV público, sin login) con el formato que exige **Meta Commerce Manager**: id, título, descripción, disponibilidad, precio final (con el recargo de Biomarketing ya incluido), link al producto y foto. Para que aparezcan las miniaturas del catálogo debajo de tus anuncios (como en las tiendas grandes):

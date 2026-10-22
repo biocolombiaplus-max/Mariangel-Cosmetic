@@ -8,6 +8,7 @@ import StarRating from "@/components/star-rating";
 import { findVariant, variantLabel } from "@/lib/variants";
 import { swatchColorFor } from "@/lib/colors";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
+import { trackFunnelEvent } from "@/lib/track-event";
 
 export default function ProductDetail({ product, whatsapp, storeName, freeShippingThreshold }) {
   const { addItem } = useCart();
@@ -21,6 +22,7 @@ export default function ProductDetail({ product, whatsapp, storeName, freeShippi
       value: product.price,
       currency: "COP",
     });
+    trackFunnelEvent("view_product");
     // Only once per page load — not on every variant selection.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
@@ -268,6 +270,7 @@ export default function ProductDetail({ product, whatsapp, storeName, freeShippi
                   value: effectivePrice * qty,
                   currency: "COP",
                 });
+                trackFunnelEvent("add_to_cart");
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);
               }}

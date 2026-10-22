@@ -5,6 +5,7 @@ import { waLink, buildOrderMessage } from "@/lib/whatsapp";
 import { parseJsonResponse } from "@/lib/api-client";
 import { money } from "@/lib/format";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
+import { trackFunnelEvent } from "@/lib/track-event";
 import FreeShippingNudge from "@/components/free-shipping-nudge";
 
 // Captures name + WhatsApp before handing off to wa.me. We have no
@@ -35,6 +36,7 @@ export default function CheckoutModal({
         value: total,
         currency: "COP",
       });
+      trackFunnelEvent("checkout_start");
     } else if (wasOpenRef.current && name.trim() && phone.trim()) {
       // Closed without finishing, but we already have a name + WhatsApp —
       // that's enough to follow up, so it lands in the CRM as an

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { updateStore } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { STAGE_KEYS } from "@/lib/crm";
+import { recordEvent } from "@/lib/visits";
 
 export async function PUT(request, { params }) {
   try {
@@ -12,6 +13,7 @@ export async function PUT(request, { params }) {
     const body = await request.json().catch(() => null);
     if (!body) return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
 
+    let justWon = false;
     const updated = await updateStore((data) => {
       const idx = (data.orders || []).findIndex((o) => o.id === id);
       if (idx === -1) return null;
@@ -23,6 +25,7 @@ export async function PUT(request, { params }) {
         // when the lead first came in.
         if (body.status === "ganado" && order.status !== "ganado") {
           order.wonAt = new Date().toISOString();
+          justWon = true;
         }
         order.status = body.status;
       }
@@ -45,6 +48,7 @@ export async function PUT(request, { params }) {
     });
 
     if (!updated) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+    if (justWon) recordEvent("won");
     return NextResponse.json(updated);
   } catch (err) {
     return NextResponse.json(

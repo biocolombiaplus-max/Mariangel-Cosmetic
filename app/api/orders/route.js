@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readStore, updateStore } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { normalizeCoPhone } from "@/lib/whatsapp";
+import { recordEvent } from "@/lib/visits";
 
 const MAX_ITEMS = 50;
 const MAX_STRING = 200;
@@ -62,6 +63,11 @@ export async function POST(request) {
       data.orders.unshift(newOrder);
       return newOrder;
     });
+
+    // Both "nuevo" and "abandonado" mean a shopper left their name + phone —
+    // the "dejaron sus datos" stage of the funnel either way. Not awaited:
+    // this is best-effort analytics, never worth delaying the real response.
+    recordEvent("lead");
 
     return NextResponse.json(order, { status: 201 });
   } catch (err) {

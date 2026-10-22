@@ -2,7 +2,7 @@ import Link from "next/link";
 import { readStore, money } from "@/lib/store";
 import { computeStats } from "@/lib/analytics";
 import { computeCommission } from "@/lib/commission";
-import { readVisits, visitStats } from "@/lib/visits";
+import { readAnalytics, visitStats } from "@/lib/visits";
 import { STAGES } from "@/lib/crm";
 
 export default async function AdminHomePage() {
@@ -10,7 +10,7 @@ export default async function AdminHomePage() {
   const { products } = data;
   const stats = computeStats(data);
   const commission = computeCommission(data);
-  const visits = visitStats(await readVisits());
+  const visits = visitStats(await readAnalytics());
   const maxDayVisits = Math.max(1, ...visits.last7Days.map((d) => d.count));
 
   const kpis = [
@@ -139,7 +139,7 @@ export default async function AdminHomePage() {
         </div>
         <div className="flex h-20 items-end gap-2">
           {visits.last7Days.map((d) => (
-            <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+            <div key={d.date} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
               <div
                 className="w-full rounded-t-md bg-brand-plum-600"
                 style={{ height: `${Math.max(6, (d.count / maxDayVisits) * 100)}%` }}
@@ -151,6 +151,12 @@ export default async function AdminHomePage() {
             </div>
           ))}
         </div>
+        <Link
+          href="/admin/analiticas"
+          className="mt-4 inline-block text-xs font-semibold text-brand-plum-700 hover:underline"
+        >
+          Ver embudo completo de la campaña →
+        </Link>
       </div>
 
       <Link

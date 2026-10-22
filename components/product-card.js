@@ -6,6 +6,7 @@ import { useCart } from "@/components/cart-context";
 import StarRating from "@/components/star-rating";
 import { priceRange } from "@/lib/variants";
 import { trackPixelEvent } from "@/lib/meta-pixel-events";
+import { trackFunnelEvent } from "@/lib/track-event";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
@@ -84,6 +85,7 @@ export default function ProductCard({ product }) {
                 value: product.price,
                 currency: "COP",
               });
+              trackFunnelEvent("add_to_cart");
             }}
             disabled={product.stock <= 0}
             className="mt-2 w-full rounded-full bg-brand-plum-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-plum-700 disabled:cursor-not-allowed disabled:bg-brand-pink-200"
