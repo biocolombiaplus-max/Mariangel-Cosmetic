@@ -75,7 +75,7 @@ function Card({ order, onDragStart, onOpen, onQuickStatus, storeName }) {
   );
 }
 
-export default function CrmBoard({ initialOrders, storeName }) {
+export default function CrmBoard({ initialOrders, storeName, products = [] }) {
   const [orders, setOrders] = useState(initialOrders);
   const [selected, setSelected] = useState(null);
   const [dragOverStage, setDragOverStage] = useState(null);
@@ -173,8 +173,11 @@ export default function CrmBoard({ initialOrders, storeName }) {
 
       {selectedOrder && (
         <CrmDetailPanel
+          key={selectedOrder.id}
           order={selectedOrder}
           storeName={storeName}
+          products={products}
+          allOrders={orders}
           onClose={() => setSelected(null)}
           onUpdate={(updated) =>
             setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)))

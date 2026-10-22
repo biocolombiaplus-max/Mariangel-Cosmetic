@@ -24,9 +24,9 @@ export default async function HomePage() {
   return (
     <>
       <Hero slides={data.sections.hero} />
+      <FeaturedProducts products={featured} />
       <TrustBar />
       <CategoryPills categories={data.categories} />
-      <FeaturedProducts products={featured} />
       <HowToBuy />
       <About about={data.sections.about} />
       <InstagramGallery

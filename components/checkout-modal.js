@@ -10,17 +10,24 @@ import { baseProductId } from "@/lib/variants";
 import FreeShippingNudge from "@/components/free-shipping-nudge";
 
 // Captures name + WhatsApp before handing off to wa.me. We have no
-// WhatsApp Business API access, so this is how every WhatsApp checkout
-// becomes a trackable lead/order in the admin CRM instead of vanishing
-// into a chat we can't see.
+// WhatsApp Business API access, so this is how every WhatsApp contact —
+// a real order, or just a general question from the floating button —
+// becomes a trackable lead in the admin CRM instead of vanishing into a
+// chat we can't see. `origin` tags where a non-order contact came from
+// (e.g. "floating_button"), so the admin can tell it apart from a real
+// cart and later attach the actual products once the sale closes.
 export default function CheckoutModal({
   open,
   onClose,
   whatsapp,
   storeName,
-  items,
-  total,
+  items = [],
+  total = 0,
   freeShippingThreshold,
+  origin,
+  buildMessage,
+  title = "Casi listo ✨",
+  description,
   onSuccess,
 }) {
   const [name, setName] = useState("");
@@ -28,6 +35,7 @@ export default function CheckoutModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const wasOpenRef = useRef(false);
+  const isOrder = items.length > 0;
 
   useEffect(() => {
     if (open) {
@@ -53,6 +61,7 @@ export default function CheckoutModal({
           items,
           total,
           status: "abandonado",
+          origin,
         }),
       }).catch(() => {});
     }
@@ -72,10 +81,10 @@ export default function CheckoutModal({
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerName: name, customerPhone: phone, items, total }),
+        body: JSON.stringify({ customerName: name, customerPhone: phone, items, total, origin }),
       });
-      await parseJsonResponse(res);
-      // The closest honest signal we have: a WhatsApp order is a
+      const createdOrder = await parseJsonResponse(res);
+      // The closest honest signal we have: a WhatsApp contact is a
       // qualified lead, not a confirmed payment, so this fires "Lead" —
       // never "Purchase" — which only a real confirmed sale should ever
       // trigger (there is no such moment client-side in this flow).
@@ -84,7 +93,12 @@ export default function CheckoutModal({
         value: total,
         currency: "COP",
       });
-      const message = buildOrderMessage(storeName, name.trim(), items, total);
+      const message = buildMessage
+        ? buildMessage(name.trim())
+        : buildOrderMessage(storeName, name.trim(), items, total, {
+            orderId: createdOrder.id,
+            customerPhone: createdOrder.customerPhone,
+          });
       window.open(waLink(whatsapp, message), "_blank", "noopener,noreferrer");
       onSuccess?.();
       onClose();
@@ -107,7 +121,7 @@ export default function CheckoutModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-brand-deep-900">Casi listo ✨</h2>
+          <h2 className="text-lg font-bold text-brand-deep-900">{title}</h2>
           <button
             onClick={onClose}
             aria-label="Cerrar"
@@ -117,12 +131,21 @@ export default function CheckoutModal({
           </button>
         </div>
         <p className="mb-4 text-sm text-brand-deep-900/70">
-          Cuéntanos tus datos para darte una atención más rápida y te llevamos a WhatsApp con tu
-          pedido listo (Total: <strong>{money(total)}</strong>).
+          {description ||
+            (isOrder ? (
+              <>
+                Cuéntanos tus datos para darte una atención más rápida y te llevamos a WhatsApp con
+                tu pedido listo (Total: <strong>{money(total)}</strong>).
+              </>
+            ) : (
+              "Cuéntanos tus datos para darte una atención más rápida y te llevamos a WhatsApp."
+            ))}
         </p>
-        <div className="mb-4">
-          <FreeShippingNudge subtotal={total} threshold={freeShippingThreshold} />
-        </div>
+        {isOrder && (
+          <div className="mb-4">
+            <FreeShippingNudge subtotal={total} threshold={freeShippingThreshold} />
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             required

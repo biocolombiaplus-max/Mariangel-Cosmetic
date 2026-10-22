@@ -11,6 +11,12 @@ function clamp(str, max) {
   return String(str || "").slice(0, max);
 }
 
+// Where a non-order WhatsApp contact (floating button, "¿tienes dudas?"
+// section, ...) came from — only these exact tags are accepted from the
+// public endpoint, so the CRM's "viene de la página web" label can always
+// be trusted.
+const ALLOWED_ORIGINS = ["floating_button", "whatsapp_cta"];
+
 export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -29,6 +35,17 @@ export async function POST(request) {
       return NextResponse.json({ error: "Nombre y WhatsApp son requeridos" }, { status: 400 });
     }
     const items = Array.isArray(body.items) ? body.items.slice(0, MAX_ITEMS) : [];
+    const origin = ALLOWED_ORIGINS.includes(body.origin) ? body.origin : null;
+    // A general inquiry (no items) keeps its "consulta_web" source whether
+    // it's a fresh lead or one that was abandoned — the stage already says
+    // which. A real cart only gets "carrito_abandonado" when it drops
+    // without an origin tag, since those come from the checkout itself.
+    const source =
+      origin
+        ? `consulta_web:${origin}`
+        : body.status === "abandonado"
+          ? "carrito_abandonado"
+          : "whatsapp";
 
     const order = await updateStore((data) => {
       if (!Array.isArray(data.orders)) data.orders = [];
@@ -58,7 +75,7 @@ export async function POST(request) {
         status: body.status === "abandonado" ? "abandonado" : "nuevo",
         tags: [],
         notes: [],
-        source: body.status === "abandonado" ? "carrito_abandonado" : "whatsapp",
+        source,
       };
       data.orders.unshift(newOrder);
       return newOrder;

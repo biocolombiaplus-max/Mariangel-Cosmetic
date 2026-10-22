@@ -3,6 +3,7 @@ import CrmBoard from "@/components/admin/crm-board";
 
 export default async function AdminOrdersPage() {
   const data = await readStore();
+  const activeProducts = (data.products || []).filter((p) => p.active);
 
   return (
     <div>
@@ -11,7 +12,11 @@ export default async function AdminOrdersPage() {
         Arrastra las tarjetas entre columnas, da clic para ver el detalle, y escribe por WhatsApp
         para hacer remarketing directo con cada clienta.
       </p>
-      <CrmBoard initialOrders={data.orders || []} storeName={data.settings.storeName} />
+      <CrmBoard
+        initialOrders={data.orders || []}
+        storeName={data.settings.storeName}
+        products={activeProducts}
+      />
     </div>
   );
 }

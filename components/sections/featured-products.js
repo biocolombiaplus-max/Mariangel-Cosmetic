@@ -27,9 +27,13 @@ export default function FeaturedProducts({
           <ProductCard key={p.id} product={p} />
         ))}
       </div>
-      <div className="mt-6 text-center sm:hidden">
-        <Link href="/tienda" className="text-sm font-semibold text-brand-plum-700 hover:underline">
-          Ver todo el catálogo →
+      <div className="mt-10 text-center">
+        <Link
+          href="/tienda"
+          className="brand-gradient inline-flex items-center gap-2 rounded-full px-10 py-4 text-base font-bold text-white shadow-lg shadow-brand-plum-700/25 transition-transform hover:scale-[1.03]"
+        >
+          Ver catálogo completo
+          <span aria-hidden>→</span>
         </Link>
       </div>
     </section>

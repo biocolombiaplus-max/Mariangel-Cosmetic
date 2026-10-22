@@ -3,6 +3,8 @@ import { updateStore } from "@/lib/store";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { STAGE_KEYS } from "@/lib/crm";
 import { recordEvent } from "@/lib/visits";
+import { markupPct, applyMarkup } from "@/lib/pricing";
+import { variantLabel } from "@/lib/variants";
 
 export async function PUT(request, { params }) {
   try {
@@ -41,6 +43,41 @@ export async function PUT(request, { params }) {
             createdAt: new Date().toISOString(),
           },
         ];
+      }
+      if (typeof body.shippingGuide === "string") {
+        order.shippingGuide = body.shippingGuide.trim().slice(0, 100);
+      }
+
+      // Lets a lead that arrived with no cart (a general WhatsApp question,
+      // not a structured order) get the real product(s) attached once the
+      // sale actually closes in chat — otherwise it could never count
+      // toward profit or Biomarketing's commission when marked "Ganado".
+      // Price/cost always come from the current catalog, never the
+      // request, so this can't be used to fake a different price.
+      if (body.addItem?.id) {
+        const [productId, variantId] = String(body.addItem.id).split("::");
+        const product = (data.products || []).find((p) => p.id === productId);
+        if (product) {
+          const variant = variantId ? product.variants?.find((v) => v.id === variantId) : null;
+          const pct = markupPct(data.settings);
+          const basePrice = variant?.price ?? product.price;
+          order.items = [
+            ...(order.items || []),
+            {
+              id: variant ? `${productId}::${variant.id}` : productId,
+              name: variant ? `${product.name} (${variantLabel(variant.values)})` : product.name,
+              price: applyMarkup(basePrice, pct),
+              basePrice,
+              image: variant?.image || product.images?.[0] || "",
+              qty: Math.max(1, Number(body.addItem.qty) || 1),
+            },
+          ];
+          order.total = order.items.reduce((s, it) => s + it.price * it.qty, 0);
+        }
+      }
+      if (typeof body.removeItemId === "string") {
+        order.items = (order.items || []).filter((it) => it.id !== body.removeItemId);
+        order.total = order.items.reduce((s, it) => s + it.price * it.qty, 0);
       }
 
       data.orders[idx] = order;
