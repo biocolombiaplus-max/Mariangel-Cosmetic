@@ -9,8 +9,27 @@ export default function ImageUploader({ value, onChange, multiple = false, label
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
 
   const urls = multiple ? value || [] : value ? [value] : [];
+
+  function addUrl() {
+    const url = urlInput.trim();
+    if (!url) return;
+    if (!/^https?:\/\//.test(url)) {
+      setError("Ese enlace no parece válido — debe empezar con http:// o https://");
+      return;
+    }
+    setError("");
+    if (multiple) {
+      onChange([...(value || []), url]);
+    } else {
+      onChange(url);
+    }
+    setUrlInput("");
+    setShowUrlInput(false);
+  }
 
   async function handleFiles(files) {
     setError("");
@@ -84,6 +103,33 @@ export default function ImageUploader({ value, onChange, multiple = false, label
         hidden
         onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))}
       />
+      {!showUrlInput ? (
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(true)}
+          className="mt-2 text-xs font-medium text-brand-plum-700 hover:underline"
+        >
+          🔗 ¿Ya tienes el enlace de la foto? Pégalo aquí
+        </button>
+      ) : (
+        <div className="mt-2 flex gap-2">
+          <input
+            autoFocus
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addUrl())}
+            placeholder="https://res.cloudinary.com/..."
+            className="min-w-0 flex-1 rounded-xl border border-brand-pink-200 px-3 py-2 text-sm outline-none focus:border-brand-plum-600"
+          />
+          <button
+            type="button"
+            onClick={addUrl}
+            className="rounded-xl bg-brand-plum-600 px-4 text-sm font-semibold text-white hover:bg-brand-plum-700"
+          >
+            Agregar
+          </button>
+        </div>
+      )}
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   );
