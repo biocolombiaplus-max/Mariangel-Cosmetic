@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { parseJsonResponse } from "@/lib/api-client";
+import PhotoLibraryPicker from "@/components/admin/photo-library-picker";
 
 // Uploads to /api/upload and reports back the resulting URL(s).
 // Works both for a single image field (value: string) and a list (value: array).
@@ -11,6 +12,16 @@ export default function ImageUploader({ value, onChange, multiple = false, label
   const [error, setError] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [showLibrary, setShowLibrary] = useState(false);
+
+  function selectFromLibrary(url) {
+    if (multiple) {
+      onChange([...(value || []), url]);
+    } else {
+      onChange(url);
+    }
+    setShowLibrary(false);
+  }
 
   const urls = multiple ? value || [] : value ? [value] : [];
 
@@ -103,15 +114,28 @@ export default function ImageUploader({ value, onChange, multiple = false, label
         hidden
         onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))}
       />
-      {!showUrlInput ? (
+      <div className="mt-2 flex flex-wrap gap-3">
         <button
           type="button"
-          onClick={() => setShowUrlInput(true)}
-          className="mt-2 text-xs font-medium text-brand-plum-700 hover:underline"
+          onClick={() => setShowLibrary(true)}
+          className="text-xs font-medium text-brand-plum-700 hover:underline"
         >
-          🔗 ¿Ya tienes el enlace de la foto? Pégalo aquí
+          📁 Elegir de tus fotos ya subidas
         </button>
-      ) : (
+        {!showUrlInput && (
+          <button
+            type="button"
+            onClick={() => setShowUrlInput(true)}
+            className="text-xs font-medium text-brand-plum-700 hover:underline"
+          >
+            🔗 Pegar enlace de una foto
+          </button>
+        )}
+      </div>
+      {showLibrary && (
+        <PhotoLibraryPicker onSelect={selectFromLibrary} onClose={() => setShowLibrary(false)} />
+      )}
+      {showUrlInput && (
         <div className="mt-2 flex gap-2">
           <input
             autoFocus
